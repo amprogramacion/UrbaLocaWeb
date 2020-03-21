@@ -55,11 +55,4 @@
         <p>Pronto tendrás más noticias de UrbaLoca.</p><br>
     </div>
 </div>
-<div class="row" style="background-color: #F9FBE6; text-align: center;">
-    <h2>¡Visita nuestro Foro!</h2>
-    <center>
-        <a href="/foro" class="btn btn-success btn-lg">Entrar al Foro de UrbaLoca</a>
-    </center>
-    <br>
-</div>
 
