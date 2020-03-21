@@ -65,7 +65,7 @@ include("autoload.php");
                         <?php
                         }
                         ?>
-                        <li<?= Web::isActive("releases", $__id); ?>><a href="/releases">Releases</a></li>
+                        <li<?= Web::isActive("releases", $__id); ?>><a href="/releases">Descargar UrbaLoca</a></li>
                         <?php
                         if(!empty($_SESSION['username'])) {
                         ?>
