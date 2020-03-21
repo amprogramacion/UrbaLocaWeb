@@ -6,7 +6,7 @@ class MySQL {
 
     public static function query($sql) {
         if (empty(self::$conexion)) {
-            $mysqli = mysqli_connect("192.168.1.80", "root", 'r3set7ing', "urbaloca");
+            $mysqli = mysqli_connect("192.168.1.80", "root", '', "urbaloca");
             if (mysqli_connect_errno($mysqli)) {
                 echo "Fallo al conectar a MySQL: " . mysqli_connect_error();
             }
