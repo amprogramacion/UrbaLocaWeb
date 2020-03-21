@@ -66,7 +66,6 @@ include("autoload.php");
                         }
                         ?>
                         <li<?= Web::isActive("releases", $__id); ?>><a href="/releases">Releases</a></li>
-                        <li><a href="/foro" target="_blank">Ir al Foro</a></li>
                         <?php
                         if(!empty($_SESSION['username'])) {
                         ?>
