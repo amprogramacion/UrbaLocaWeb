@@ -7,7 +7,7 @@ class Users extends Web {
         $query = self::query($sql);
         if (self::rowCount($query) >= 1) {
             $ver = self::fetch($query);
-
+            
             if (password_verify($post['pass'], $ver['pass'])) {
                 self::GenerateLoginToken($ver['usuario']);
                 $_SESSION['username'] = $ver['usuario'];
