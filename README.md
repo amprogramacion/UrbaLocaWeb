@@ -24,10 +24,6 @@ apt install mysql-server
 
 _Copia los archivos de la web en tu carpeta htdocs o /var/www/html y configura el fichero clases/MySQL.php con los datos de tu base de datos._
 
-## Wiki 📖
-
-Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki](http://urba-loca.com/foro)
-
 ## Autores ✒️
 
 * **Javi DeHaro** - *Idea, fundador y diseñador desde 2003 hasta 2014* - [Facebook](https://www.facebook.com/JaviDeHaro93)
