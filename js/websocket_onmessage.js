@@ -10,6 +10,9 @@ function WebSocketOnMessageEvent(event) {
         var obj = JSON.parse(event.data);
 
         switch (obj.command) { //obj.params
+            case "JoinAccepted":
+                JoinRoom();
+            break;
             default:
                 console.log("Estado no parseado 0: " + obj.command);
                 break;
