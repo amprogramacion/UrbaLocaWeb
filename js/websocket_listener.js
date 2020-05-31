@@ -1,10 +1,11 @@
-/* global miWebsocket */
+/* global miWebsocket, QueryString */
 
 $(document).ready(function () {
 
     miWebsocket.addEventListener('open', function (event) {
         WebSocketOpened(event);
-        miWebsocket.send('{"command": "RealTimeQueues"}');
+        //Le digo donde estoy
+        miWebsocket.send('{"command": "JoinRoom", "params": {"roomid": "'+QueryString.id+'"}}');
     });
 
     miWebsocket.addEventListener('message', function (event) {
