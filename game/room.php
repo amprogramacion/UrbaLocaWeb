@@ -1,6 +1,4 @@
 <?php
-
-echo "<pre>".print_r($_REQUEST, true)."</pre>";
 $user = empty($_GET['user']) ? "escavo" : $_GET['user'];
 ?>
 <!DOCTYPE html>
@@ -22,8 +20,10 @@ $user = empty($_GET['user']) ? "escavo" : $_GET['user'];
     </head>
     <body style="height: 98vh;">
         <div id="idl_websocket_status">Espera...</div>
-        <input type="text" id="urbaloca_username" value="<?=$user;?>">
-        <input type="text" id="mix">
-        <input type="text" id="miy">
+        <input type="hidden" id="urbaloca_username" value="<?=$user;?>">
+        <input type="hidden" id="mix">
+        <input type="hidden" id="miy">
+        <input type="hidden" id="charx">
+        <input type="hidden" id="chary">
     </body>
 </html>
