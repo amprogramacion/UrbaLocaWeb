@@ -15,6 +15,6 @@
     </div>
     <div class="col-md-12" style=" text-align: center !important;">
         <hr>
-        <span style="color: white; font-size: 16px;">Copyright &copy; urba-loca.com. Todos los derechos reservados.</span>
+        <span style="color: white; font-size: 16px;">Copyright &copy; urbaloca.es. Todos los derechos reservados.</span>
     </div>
 </div>
