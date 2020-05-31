@@ -22,12 +22,15 @@ $(document).ready(function () {
     });
 });
 
-function SendMyPosition() {
+function SendMyPosition(user) {
     var username = $("#urbaloca_username").val();
-    var mix = $("#charx").val();
-    var miy = $("#chary").val();
+    if (user != username) {
+        var username = $("#urbaloca_username").val();
+        var mix = $("#charx").val();
+        var miy = $("#chary").val();
 
-    miWebsocket.send('{"command": "SendPosition", "params": {"username": "' + username + '", "roomid": "' + QueryString.id + '", "x": "' + mix + '", "y": "' + miy + '"}}');
+        miWebsocket.send('{"command": "SendPosition", "params": {"username": "' + username + '", "roomid": "' + QueryString.id + '", "x": "' + mix + '", "y": "' + miy + '"}}');
+    }
 }
 
 function MoveLoko(loko, x, y) {
@@ -39,8 +42,8 @@ function JoinRoom() {
 
     $("body").append("<div id='loko_" + username + "' class='loko'>" + username + "</div>");
 
-    var y = $("#loko_"+username).css("top");
-    var x = $("#loko_"+username).css("left");
+    var y = $("#loko_" + username).css("top");
+    var x = $("#loko_" + username).css("left");
     $("#charx").val(x);
     $("#chary").val(y);
 }
