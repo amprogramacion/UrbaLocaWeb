@@ -15,7 +15,7 @@ function WebSocketOnMessageEvent(event) {
                 break;
             case "UserEnterRoom":
                 UserEnterRoom(obj.params.username);
-                SendMyPosition();
+                SendMyPosition(obj.params.username);
                 break;
             case "SendPosition":
                 UserEnterRoom(obj.params.username, obj.params.x, obj.params.y);
