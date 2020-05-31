@@ -1,3 +1,5 @@
+/* global miWebsocket, QueryString */
+
 /**
  * Se ejecuta cuando la conexión con el socket servidor es positiva
  * 
@@ -10,6 +12,9 @@ function WebSocketOpened(event) {
     try {
         //Pintamos el div de conectado
         $("#idl_websocket_status").html("CONECTADO");
+
+        //Le digo donde estoy
+        miWebsocket.send('{"command": "JoinRoom", "params": {"roomid": "'+QueryString.id+'"}}');
     } catch (error) {
         console.log("[WebSocketOpened][error] " + error);
     }
