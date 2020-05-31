@@ -92,7 +92,7 @@ class Users extends Web {
             $token = sha1(strtotime("now") . rand(111, 999));
             $sql = "UPDATE usuarios SET token='$token' WHERE email='$email'";
             self::query($sql);
-            self::SendEmail($email, "[URBALOCA] Solicitud de clave de acceso", "Hola,<br>Recientemente nos has solicitado una clave.<br><br>Haz click aqui para generar una nueva clave:<br> <a href='http://urba-loca.com/recordar2&token=$token&email=$email'>http://urba-loca.com/recordar2&token=$token&email=$email</a><br><br>No respondas a este correo, se ha generado autom&aacute;ticamente.");
+            self::SendEmail($email, "[URBALOCA] Solicitud de clave de acceso", "Hola,<br>Recientemente nos has solicitado una clave.<br><br>Haz click aqui para generar una nueva clave:<br> <a href='http://urbaloca.es/recordar2&token=$token&email=$email'>http://urbaloca.es/recordar2&token=$token&email=$email</a><br><br>No respondas a este correo, se ha generado autom&aacute;ticamente.");
             echo self::Alerta("success", "Revisa tu email", "Te hemos enviado un email con un enlace para recuperar tu contraseña.");
             echo self::Redir(3, "/");
         }
