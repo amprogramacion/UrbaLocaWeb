@@ -29,7 +29,7 @@ include("autoload.php");
             "@context" : "http://schema.org",
             "@type" : "Organization",
             "name" : "UrbaLoca",
-            "url" : "http://urba-loca.com",
+            "url" : "http://urbaloca.es",
             "sameAs" : [
             "https://www.facebook.com/UrbaLoca-Returns-863433524035746/"
             ]
