@@ -1,11 +1,11 @@
 <?php
 session_start();
 
-if(!empty($_GET['id'])) {
-$__id = $_GET['id'];
-if (!file_exists($__id . '.php') && !empty($__id)) {
-    header("HTTP/1.0 404 Not Found");
-}
+if (!empty($_GET['id'])) {
+    $__id = $_GET['id'];
+    if (!file_exists($__id . '.php') && !empty($__id)) {
+        header("HTTP/1.0 404 Not Found");
+    }
 }
 include("autoload.php");
 ?>
@@ -57,23 +57,23 @@ include("autoload.php");
                     <ul class="nav navbar-nav">
                         <li<?= Web::isActive("", $__id); ?>><a href="/">Inicio</a></li>
                         <?php
-                        if(empty($_SESSION['username'])) {
-                        ?>
-                        <li<?= Web::isActive("entrar", $__id); ?>><a href="/entrar">Entrar</a></li>
-                        <li<?= Web::isActive("registro", $__id); ?>><a href="/registro">Regístrate</a></li>
-                        <?php
+                        if (empty($_SESSION['username'])) {
+                            ?>
+                            <li<?= Web::isActive("entrar", $__id); ?>><a href="/entrar">Entrar</a></li>
+                            <li<?= Web::isActive("registro", $__id); ?>><a href="/registro">Regístrate</a></li>
+                            <?php
                         } else {
-                         ?>
-                        <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta">Mi Perfil (<?=$_SESSION['username'];?>)</a></li>
-                        <?php
+                            ?>
+                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta">Mi Perfil (<?= $_SESSION['username']; ?>)</a></li>
+                            <?php
                         }
                         ?>
                         <li<?= Web::isActive("releases", $__id); ?>><a href="/releases">Descargar UrbaLoca</a></li>
                         <?php
-                        if(!empty($_SESSION['username'])) {
-                        ?>
-                        <li<?= Web::isActive("logout", $__id); ?>><a href="/logout" onclick="javascript:seguro(this.href); return false;">Cerrar Sesión</a></li>
-                        <?php
+                        if (!empty($_SESSION['username'])) {
+                            ?>
+                            <li<?= Web::isActive("logout", $__id); ?>><a href="/logout" onclick="javascript:seguro(this.href); return false;">Cerrar Sesión</a></li>
+                            <?php
                         }
                         ?>
                     </ul>
@@ -107,10 +107,10 @@ include("autoload.php");
         <script>
             function seguro(url) {
                 var pregunta = confirm("¿Seguro que deseas realizar la acción seleccionada?");
-                if(pregunta === true) {
-                    document.location.href= url;
+                if (pregunta === true) {
+                    document.location.href = url;
                 }
             }
-            </script>
+        </script>
     </body>
 </html>
