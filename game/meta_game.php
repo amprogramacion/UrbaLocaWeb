@@ -8,3 +8,4 @@
 <script src="/js/websocket_onopen.js"></script>
 <script src="/js/websocket_onmessage.js"></script>
 <script src="/js/websocket_onclose.js"></script>
+<script src="/js/rooms.js"></script>
