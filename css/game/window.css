@@ -5,7 +5,6 @@
 }
 
 .window-header {
-    margin-bottom: 10px;
     padding: 4px;
     background-color: white;
     border-radius: 15px 15px 0px 0px;
@@ -35,8 +34,11 @@
     background-color: #006cb4;
 }
 
-
-
 .window-body {
-    border: 2px solid green;
+    background-color: white;
+    color: black;
+    border-radius: 0px 0px 15px 15px;
+    -moz-border-radius: 0px 0px 15px 15px;
+    -webkit-border-radius: 0px 0px 15px 15px;
+    padding: 5px;
 }
