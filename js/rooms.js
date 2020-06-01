@@ -14,8 +14,8 @@ $(document).ready(function () {
 
         MoveLoko(username, mix, miy);
 
-        $("#charx").val(mix+"px");
-        $("#chary").val(miy+"px");
+        $("#charx").val(mix + "px");
+        $("#chary").val(miy + "px");
 
 
         miWebsocket.send('{"command": "MoveChar", "params": {"username": "' + username + '", "roomid": "' + QueryString.id + '", "x": "' + mix + '", "y": "' + miy + '"}}');
@@ -44,8 +44,8 @@ function JoinRoom() {
 
     var y = $("#loko_" + username).css("top");
     var x = $("#loko_" + username).css("left");
-    $("#charx").val(x+"px");
-    $("#chary").val(y+"px");
+    $("#charx").val(x + "px");
+    $("#chary").val(y + "px");
 }
 
 function UserEnterRoom(user, x = null, y = null) {
@@ -67,6 +67,6 @@ function MoveOtherChar(user, x, y) {
     }
 }
 
-function LeaveRoom() {
-
+function LeaveRoom(user) {
+    $("#loko_" + user).remove();
 }
