@@ -20,6 +20,11 @@ $(document).ready(function () {
 
         miWebsocket.send('{"command": "MoveChar", "params": {"username": "' + username + '", "roomid": "' + QueryString.id + '", "x": "' + mix + '", "y": "' + miy + '"}}');
     });
+
+    $(".cerrar_ventana").click(function () {
+        var id = $(this).data("id");
+        $("." + id).css("display", "none");
+    });
 });
 
 function SendMyPosition(user) {
