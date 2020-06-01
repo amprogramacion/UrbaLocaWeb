@@ -1,15 +1,3 @@
-.navegador {
-    border: 2px solid black;
-    width: 350px;
-    padding: 10px;
-}
-.navegador-header {
-    border: 2px solid red;
-    margin-bottom: 10px;
-}
-.navegador-body {
-    border: 2px solid green;
-}
 
 .room-itemlist {
 

@@ -1,0 +1,12 @@
+.window {
+    border: 2px solid black;
+    width: 350px;
+    padding: 10px;
+}
+.window-header {
+    border: 2px solid red;
+    margin-bottom: 10px;
+}
+.window-body {
+    border: 2px solid green;
+}
