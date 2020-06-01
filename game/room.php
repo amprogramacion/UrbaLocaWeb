@@ -17,14 +17,7 @@ $user = empty($_GET['user']) ? "escavo" : $_GET['user'];
         <input type="hidden" id="chary">
         <?php
         include("navegador.php");
+        include("footer.php");
         ?>
-        <div id="footer">
-            <div class="row">
-                <div class="col-md-1">
-                    <a href="javascript:void(0);">SALAS</a>
-                </div>
-                
-            </div>
-        </div>
     </body>
 </html>
