@@ -21,7 +21,8 @@
 }
 
 .window-header-btn {
-    text-align: right;
+    float: right !important;
+    padding-right: 5px;
 }
 
 .window-blue {
