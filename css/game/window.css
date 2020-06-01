@@ -1,12 +1,41 @@
 .window {
-    border: 2px solid black;
-    width: 350px;
-    padding: 10px;
+    border-radius: 15px 15px 15px 15px;
+    -moz-border-radius: 15px 15px 15px 15px;
+    -webkit-border-radius: 15px 15px 15px 15px;
 }
+
 .window-header {
-    border: 2px solid red;
     margin-bottom: 10px;
+    padding: 4px;
+    background-color: white;
+    border-radius: 15px 15px 0px 0px;
+    -moz-border-radius: 15px 15px 0px 0px;
+    -webkit-border-radius: 15px 15px 0px 0px;
+    cursor: pointer;
 }
+
+.window-header-text {
+    color: white;
+    text-align: left;
+    font-weight: bold;
+}
+
+.window-header-btn {
+    text-align: right;
+}
+
+.window-blue {
+    background-color: #afdfff;
+    border: 1px solid #3db1ff;
+}
+
+.window-blue > .window-header {
+    border: 1px solid #3db1ff;
+    background-color: #006cb4;
+}
+
+
+
 .window-body {
     border: 2px solid green;
 }
