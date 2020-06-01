@@ -1,3 +1,6 @@
+<?php
+include("game_controller.php");
+?>
 <div class="navegador draggable">
     <div class="navegador-header drag-header">NAVEGADOR DE SALAS</div>
     <div class="navegador-body">
