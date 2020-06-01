@@ -25,6 +25,11 @@ $(document).ready(function () {
         var id = $(this).data("id");
         $("." + id).css("display", "none");
     });
+    
+    $(".abrir_ventana").click(function () {
+        var id = $(this).data("id");
+        $("." + id).css("display", "block");
+    });
 });
 
 function SendMyPosition(user) {
