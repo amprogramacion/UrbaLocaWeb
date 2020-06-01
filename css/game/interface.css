@@ -4,4 +4,11 @@
     width: 100%;
     border-top: 2px solid black;
     padding: 20px;
+    color: white;
+    background-color: #5a5a5a;
+}
+
+.boton_footer {
+    font-size: 36px;
+    color: white;
 }
