@@ -15,4 +15,5 @@
 
 <link rel="stylesheet" href="/css/game/interface.css">
 <link rel="stylesheet" href="/css/game/char.css">
+<link rel="stylesheet" href="/css/game/window.css">
 <link rel="stylesheet" href="/css/game/navegador.css">
