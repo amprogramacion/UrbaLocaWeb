@@ -25,10 +25,15 @@ $(document).ready(function () {
         var id = $(this).data("id");
         $("." + id).css("display", "none");
     });
-    
+
     $(".abrir_ventana").click(function () {
         var id = $(this).data("id");
-        $("." + id).css("display", "block");
+        var estilo_actual = $("." + id).css("display");
+        if (estilo_actual == "none") {
+            $("." + id).css("display", "block");
+        } else {
+            $("." + id).css("display", "none");
+        }
     });
 });
 
