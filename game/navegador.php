@@ -23,6 +23,6 @@ $salas = Rooms::GetRooms();
 </div>
 <script>
     $(document).ready(function () {
-        $(".draggable").draggable({containment: "body", scroll: false, handle: ".drag-header"});
+        $(".draggable").draggable({containment: "#game-container", scroll: false, handle: ".drag-header"});
     });
 </script>
