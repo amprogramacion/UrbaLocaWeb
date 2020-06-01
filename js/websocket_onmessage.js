@@ -19,9 +19,12 @@ function WebSocketOnMessageEvent(event) {
                 break;
             case "SendPosition":
                 UserEnterRoom(obj.params.username, obj.params.x, obj.params.y);
-            break;
+                break;
             case "MoveChar":
                 MoveOtherChar(obj.params.username, obj.params.x, obj.params.y);
+                break;
+            case "UserExit":
+                LeaveRoom(obj.params.username);
                 break;
             default:
                 console.log("Estado no parseado 0: " + obj.command);
