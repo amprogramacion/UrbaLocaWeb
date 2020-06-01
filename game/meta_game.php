@@ -12,6 +12,7 @@
 <script src="/js/rooms.js"></script>
 
 <link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/font-awesome.min.css">
 
 <link rel="stylesheet" href="/css/game/interface.css">
 <link rel="stylesheet" href="/css/game/char.css">
