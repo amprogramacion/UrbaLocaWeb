@@ -10,7 +10,7 @@ $user = empty($_GET['user']) ? "escavo" : $_GET['user'];
     </head>
     <body style="height: 98vh; padding: 0px; margin: 0px;">
 
-        <div style="border: 2px solid red; height: 90%;">
+        <div style="height: 90%;" id="game-container">
             <div id="idl_websocket_status" class="label label-default">Espera...</div>
             <input type="hidden" id="urbaloca_username" value="<?= $user; ?>">
             <input type="hidden" id="mix">
