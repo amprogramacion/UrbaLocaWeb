@@ -8,7 +8,7 @@ $salas = Rooms::GetRooms();
             NAVEGADOR DE SALAS
         </span>
         <span class="window-header-btn">
-            <a href="javascript:void(0);" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a>
+            <a href="javascript:void(0);" class="btn btn-danger btn-xs cerrar_ventana" data-id="navegador"><i class="fa fa-times"></i></a>
         </span>
     </div>
     <div class="window-body">
