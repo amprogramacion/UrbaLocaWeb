@@ -5,7 +5,7 @@ $(document).ready(function () {
     miWebsocket.addEventListener('open', function (event) {
         WebSocketOpened(event);
         //Le digo donde estoy
-        miWebsocket.send('{"command": "JoinRoom", "params": {"roomid": "'+QueryString.id+'"}}');
+        miWebsocket.send('{"command": "JoinRoom", "params": {"roomid": "' + QueryString.id + '"}}');
     });
 
     miWebsocket.addEventListener('message', function (event) {
