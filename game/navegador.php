@@ -2,9 +2,9 @@
 include("game_controller.php");
 $salas = Rooms::GetRooms();
 ?>
-<div class="navegador draggable">
-    <div class="navegador-header drag-header">NAVEGADOR DE SALAS</div>
-    <div class="navegador-body">
+<div class="window window-blue draggable">
+    <div class="window-header drag-header">NAVEGADOR DE SALAS</div>
+    <div class="window-body">
         <?php
         if(is_array($salas)) {
             foreach($salas as $room) {
