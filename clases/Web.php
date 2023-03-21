@@ -72,14 +72,14 @@ class Web extends MySQL {
                 'allow_self_signed' => true
             )
         );
-        $mail->Host = 'smtp.gmail.com';
+        $mail->Host = 'smtp.dondominio.com';
         $mail->Port = 587;
         $mail->SMTPAuth = true;
-        $mail->Username = 'YOUR_USERNAME';
-        $mail->Password = 'YOUR_PASSWORD';
+        $mail->Username = 'contacto@urbaloca.es';
+        $mail->Password = 'R3$et7inG@&&Z';
         $mail->SMTPSecure = 'tls';
 
-        $mail->From = 'YOUR_USERNAME';
+        $mail->From = 'contacto@urbaloca.es';
         $mail->FromName = 'UrbaLoca';
         $mail->AddAddress($to);
 
