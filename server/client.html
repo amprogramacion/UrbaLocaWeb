@@ -212,15 +212,8 @@
                  });*/
 
                 // add a tree and set the data as it is added to -
-                tree = new Tree().alp(.9);
-                board.add(tree, 5, 4, "-", purple); // - will mean can't change color
-
-                // currently, can only use board.add() method to add to the visible board via tile parameter
-                // use the info property (or original info parameters) to add anything off the board
-                // Note: if below were to add a tree to the board, board.update() would be needed to see it
-                // Note: board.remove(obj) removes object regardless of it being on or off the board
-                board.info[14][2] = {data: "-", color: blue, icon: null, items: [new Tree().alp(.9)]};
-
+                board.add(new Tree().alp(.9), 5, 3, "-", purple); // - will mean can't change color
+                board.add(new Tree().alp(.9), 5, 0, "-", purple); // - will mean can't change color
                 //Añadimos al jugador local
                 player = new Person(blue, red, blue);
                 board.add(player, 4, 7);
@@ -324,7 +317,7 @@
                 messages.scrollTop = messages.scrollHeight;
                 messages.style.paddingBottom = "40px";
             }
-            
+
             function MostrarError(txt) {
                 const errorLabel = new Label(txt, null, null, "white");
                 var error = new Pane(400, 100, errorLabel, "red");
