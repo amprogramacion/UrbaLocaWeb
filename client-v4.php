@@ -79,11 +79,11 @@
                         placeholder: "Hablar...",
                         shadowColor: -1,
                         maxLength: 25
-                    }).loc(15, 703);
+                    }).loc(150, 703);
                     new Button({
                         label: "HABLAR",
                         group: "shading"
-                    }).loc(350, 703).tap(function () {
+                    }).loc(650, 703).tap(function () {
                         if (input.text == "") {
                             MostrarError("Debes escribir algo.");
                         } else {
