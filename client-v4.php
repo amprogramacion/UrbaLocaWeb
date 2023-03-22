@@ -95,7 +95,7 @@
 
 
                     // set parameters for the zim.Socket object
-                    var server = "http://localhost:3000";
+                    var server = zimSocketURL;
                     var app = "urbaloca";
                     var room = "UrbaLocav4-alpha"; // just use the default room
                     var maxPeople = null; // just use the default of 0 which means unlimited
