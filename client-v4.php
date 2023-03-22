@@ -78,7 +78,7 @@
                     const input = new TextInput({
                         placeholder: "Hablar...",
                         shadowColor: -1,
-                        maxLength: 25
+                        maxLength: 250
                     }).loc(150, 703);
                     new Button({
                         label: "HABLAR",
