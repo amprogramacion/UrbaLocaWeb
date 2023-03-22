@@ -26,7 +26,7 @@
             #messages {
                 border: 2px solid red;
                 width: 350px;
-                height: 150px;
+                height: 100vh;
                 position: absolute;
                 top: 0;
                 left: 0;
