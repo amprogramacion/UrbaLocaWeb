@@ -2,6 +2,11 @@
 <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
+        <h1>UrbaLoca v4</h1>
+        <p>Ya ha salido la nueva versión alpha de urbaloca, y durante todo el desarrollo vosotros, la comunidad, seréis testigos y participantes de su construcción.</p>
+        <ul>
+            <li><a href="https://github.com/amprogramacion/urbaloca-server-v4" target="_blank">Descargar Urbaloca-Server-v4 aquí</a></li>
+        </ul>
         <h1>Old-Release 2016</h1>
         <p>Liberamos el código de la Old-Release 2016.</p>
         <p>Esta versión no está en ningún repositorio, debido a que ya no recibe soporte de actualizaciones. No obstante, 
