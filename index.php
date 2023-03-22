@@ -56,6 +56,7 @@ include("autoload.php");
                 <div id="navbarCollapse" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li<?= Web::isActive("", $__id); ?>><a href="/">Inicio</a></li>
+                        <li><a href="/client-v4.php" target="_blank">Entrar a la v4</a></li>
                         <?php
                         if (empty($_SESSION['username'])) {
                             ?>
