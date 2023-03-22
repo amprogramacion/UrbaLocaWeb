@@ -7,7 +7,7 @@
 
         <script src="https://zimjs.org/cdn/1.3.2/createjs.js"></script>
         <script src="https://zimjs.org/cdn/nft/00/zim.js"></script>
-        <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+        <script src="https://zimjs.org/cdn/2.3.0/socket.io.js"></script>
         <script src="https://zimjs.org/cdn/zimserver_urls.js"></script>
         <script src="https://zimjs.org/cdn/zimsocket_1.1.js"></script>
 
