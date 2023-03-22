@@ -2,12 +2,11 @@
 <html>
     <head>
 
-
         <!-- for CreateJS and ZIMjs https://zimjs.com - free to modify - Dan Zen 2015 -->
         <!-- see https://zimjs.com/templates for more templates and meta tags -->
 
         <script src="https://zimjs.org/cdn/1.3.2/createjs.js"></script>
-        <script src="https://zimjs.org/cdn/cat/03/zim.js"></script>
+        <script src="https://zimjs.org/cdn/nft/00/zim.js"></script>
         <script src="http://localhost:3000/socket.io/socket.io.js"></script>
         <script src="https://zimjs.org/cdn/zimserver_urls.js"></script>
         <script src="https://zimjs.org/cdn/zimsocket_1.1.js"></script>
@@ -27,8 +26,10 @@
         </style>
 
         <script>
-            others = {};
-            player = null;
+            var others = {};
+            var player = null;
+            var buttonEntrar = null;
+
             var scaling = "fit"; // this will resize to fit inside the screen dimensions
             var width = 1024;
             var height = 768;
@@ -37,8 +38,6 @@
 
             var frame = new Frame({scaling, width, height, color, outerColor, retina: true});
             frame.on("ready", function () {
-                zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
-
                 var stage = frame.stage;
                 var stageW = frame.width;
                 var stageH = frame.height;
@@ -46,10 +45,29 @@
                 ZIMONON = true; // set this to true if using ZIMON - like JSON but with any object
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // IMPLEMENTACION LOCAL DEL MAPA
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 // IMPLEMENTACION DEL SOCKET
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 function begin() { // called from interface button at end of section below
+
+                    const input = new TextInput({
+                        placeholder: "Hablar...",
+                        shadowColor: -1,
+                        maxLength: 25
+                    }).loc(15, 703);
+                    new Button({
+                        label: "HABLAR",
+                        group: "shading"
+                    }).loc(350, 703).tap(function () {
+                        hablar();
+                    });
 
 
                     // set parameters for the zim.Socket object
@@ -68,15 +86,11 @@
                     // the event object holds all the data of the others in the room
                     // in this case, we have one big room as the default maxPeople is unlimited (the second null above)
                     socket.on("ready", function (avatars) {
-
-                        zog("connected");
-                        alert("mi id "+socket.id);
-
                         player.on("moving", function () {
                             socket.setProperties({x: player.x, y: player.y});
                         });
-                        
-                        player.on("moved", function() {
+
+                        player.on("moved", function () {
                             socket.setProperties({boardCol: player.boardCol, boardRow: player.boardRow, accion: 'estoyparado'});
                         });
 
@@ -100,9 +114,9 @@
                         }
                     });
                     socket.on("data", function (data) {
-                        switch(data.accion) {
+                        switch (data.accion) {
                             case "caminar":
-                                 board.followPath(others[data.id], data.path); //caminar
+                                board.followPath(others[data.id], data.path); //caminar
                                 break;
                         }
                     });
@@ -124,7 +138,6 @@
                 }
 
                 function createAvatar(id, x, y) {
-                    alert("CreateAvatar "+id+" "+x+" "+y);
                     others[id] = new Person(yellow, silver, brown);
                     board.add(others[id], x, y);
                     stage.update();
@@ -268,14 +281,15 @@
                 // COLLECTING AND SCORING
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                var errorLabel = new Label("", null, null, "white");
+                const errorLabel = new Label("", null, null, "white");
                 var error = new Pane(400, 100, errorLabel, "red");
                 error.sca(1.5);
 
                 new Button({
                     label: "ENTRAR",
                     group: "shading"
-                }).loc(350, 703).tap(function () {
+                }).center().tap(function (e) {
+                    e.target.dispose();
                     begin();
                 });
 
@@ -285,6 +299,9 @@
 
             }); // end of ready
 
+            function CrearMapa() {
+
+            }
         </script>
 
 
