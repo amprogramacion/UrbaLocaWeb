@@ -23,6 +23,16 @@
                 background-color:#FFF;
                 background-image:url("images/avatarBacking3.jpg");
             }
+            #messages {
+                border: 2px solid red;
+                width: 350px;
+                height: 150px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 9999;
+                background-color: white;
+            }
         </style>
 
         <script>
@@ -35,6 +45,14 @@
             var height = 768;
             var color = light;
             var outerColor = darker;
+            var initObj = {x: 4, y: 7, boardCol: 4, boardRow: 7, username: null};
+            var username = prompt("Nombre de usuario:");
+            if (username == null) {
+                alert("Necesito un usuario para identificarte. Es temporal.");
+                window.location.reload();
+            } else {
+                initObj.username = username;
+            }
 
             var frame = new Frame({scaling, width, height, color, outerColor, retina: true});
             frame.on("ready", function () {
@@ -66,19 +84,24 @@
                         label: "HABLAR",
                         group: "shading"
                     }).loc(350, 703).tap(function () {
-                        hablar();
+                        if (input.text == "") {
+                            MostrarError("Debes escribir algo.");
+                        } else {
+                            hablar(username, input.text);
+                            socket.setProperties({username: username, decir: input.text, accion: 'hablar'});
+                            input.text = "";
+                        }
                     });
 
 
                     // set parameters for the zim.Socket object
                     var server = "http://localhost:3000";
                     var app = "urbaloca";
-                    var room = null; // just use the default room
+                    var room = "UrbaLocav4-alpha"; // just use the default room
                     var maxPeople = null; // just use the default of 0 which means unlimited
                     var fill = null; // just use the default of fill where clients leave
                     // we can send an optional initial object to the server
                     // this information will get sent to all the other clients in an otherjoin event
-                    var initObj = {x: 4, y: 7, boardCol: 4, boardRow: 7};
 
                     socket = new Socket(server, app, room, maxPeople, fill, initObj);
 
@@ -111,6 +134,7 @@
                     socket.on("otherjoin", function (data) {
                         if (data) {
                             createAvatar(data.id, data.boardCol, data.boardRow);
+                            hablar("[UL]", data.username + " ha entrado.");
                         }
                     });
                     socket.on("data", function (data) {
@@ -118,17 +142,20 @@
                             case "caminar":
                                 board.followPath(others[data.id], data.path); //caminar
                                 break;
+                            case "hablar":
+                                hablar(data.username, data.decir);
+                                break;
                         }
                     });
 
                     socket.on("otherleave", function (data) {
                         board.remove(others[data.id]);
+                        hablar("[UL]", data.username + " ha salido.");
                         stage.update();
                     });
 
                     socket.on("error", function () {
-                        error.label.text = "connection error";
-                        error.show();
+                        MostrarError("Error de conexión");
                         socket.disconnect();
                     });
 
@@ -281,26 +308,27 @@
                 // COLLECTING AND SCORING
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                const errorLabel = new Label("", null, null, "white");
-                var error = new Pane(400, 100, errorLabel, "red");
-                error.sca(1.5);
-
-                new Button({
-                    label: "ENTRAR",
-                    group: "shading"
-                }).center().tap(function (e) {
+                new Button({label: "ENTRAR", group: "shading"}).center().tap(function (e) {
                     e.target.dispose();
                     begin();
                 });
-
-
 
                 stage.update(); // this is needed to show any changes
 
             }); // end of ready
 
-            function CrearMapa() {
-
+            function hablar(usr, texto) {
+                var messages = zid("messages");
+                var current = messages.innerHTML;
+                messages.innerHTML = current + usr + ": " + texto + "<br>"; // just so not always reading at the very bottom
+                messages.scrollTop = messages.scrollHeight;
+                messages.style.paddingBottom = "40px";
+            }
+            
+            function MostrarError(txt) {
+                const errorLabel = new Label(txt, null, null, "white");
+                var error = new Pane(400, 100, errorLabel, "red");
+                error.sca(1.5).show();
             }
         </script>
 
@@ -309,5 +337,6 @@
 
     <body>
         <!-- canvas with id="myCanvas" is made by zim Frame -->
+        <div id="messages"></div>
     </body>
 </html>
