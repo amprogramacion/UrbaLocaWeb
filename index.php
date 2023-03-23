@@ -70,6 +70,7 @@ include("autoload.php");
                         }
                         ?>
                         <li<?= Web::isActive("releases", $__id); ?>><a href="/releases">Descargar UrbaLoca</a></li>
+                        <li<?= Web::isActive("dev-team", $__id); ?>><a href="/dev-team">Entrar en el Dev Team</a></li>
                         <?php
                         if (!empty($_SESSION['username'])) {
                             ?>
