@@ -14,5 +14,5 @@
         <p>La base de datos, el .fla original, los backups.... TODO lo que necesitas está aquí: <a href="https://mega.nz/folder/OZxw0ALB#nByZu7eb847fVWzY394QiQ" target="_blank">https://mega.nz/folder/OZxw0ALB#nByZu7eb847fVWzY394QiQ</a></p>
         <h1>Grupo de Discord</h1>
         <p>Entra en el grupo <strong>UrbaLoca Dev Team</strong> en Discord y participa en el desarrollo: <a href="https://discord.gg/5MGbpWJgeU" target="_blank">https://discord.gg/5MGbpWJgeU</a></p>
-    </div>
+   <br><br><br> </div>
 </div>
