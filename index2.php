@@ -9,8 +9,8 @@
         <div class="item slides active">
             <div class="slide-1"></div>
             <div class="hero">
-                <h1 class="s1">Urba Loca,</h1>
-                <p class="texts1">¡Próximo lanzamiento en <b>2023</b>!</p>
+                <h1 class="s1">Urba Loca ha reabierto!</h1>
+                <p class="texts1"><a href="https://old2016.urba-loca.es/" style="color: yellow; font-weight: bold;" class="btn btn-lg btn-danger">Entrar a la Old-Release 2016</a></p>
             </div>
         </div>
     </div> 
