@@ -43,7 +43,7 @@ include("autoload.php");
         include("cookies.php");
         ?>
         <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
                         <span class="sr-only">Toggle navigation</span>
