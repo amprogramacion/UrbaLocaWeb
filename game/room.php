@@ -13,8 +13,11 @@ include("../controller.php");
 <script src="https://zimjs.org/cdn/game_2.4.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <script>
+    toastr.options.preventDuplicates = true;
     var others = {};
     const assets = [
         "/game/muebles/10_1.png",
@@ -34,8 +37,9 @@ include("../controller.php");
         var room = "UrbaLocav4-alpha"; // just use the default room
         var maxPeople = null; // just use the default of 0 which means unlimited
         var fill = null; // just use the default of fill where clients leave
-        var initObj = {x: 4, y: 0, boardCol: 4, boardRow: 0, username: null};
-        var username = "escavo";//prompt("Nombre de usuario:");
+        var username = "<?= $_SESSION['usuario'].rand(1,1000); ?>";
+        var initObj = {x: 4, y: 0, boardCol: 4, boardRow: 0, username: username};
+        //prompt("Nombre de usuario:");
 
         // we can send an optional initial object to the server
         // this information will get sent to all the other clients in an otherjoin event
@@ -54,6 +58,8 @@ include("../controller.php");
         board.center();
 
         player = new Person(green, red, purple);
+        playerRectangle = new Rectangle({width: 110, height: 40, color: white, corner: [10, 10, 10, 10]}).sca(0.5).center().pos(0, -30, CENTER, TOP, player);
+        playerUsrLabel = new Label(username, null, null, black).pos(0, 0, CENTER, CENTER, playerRectangle);
         board.add(player, 4, 0);
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,11 +69,11 @@ include("../controller.php");
         socket = new Socket(server, app, room, maxPeople, fill, initObj);
 
         socket.on("ready", function (avatars) {
-
+            toastr.success("Conectado al servidor");
             ServerConectado();
 
             player.on("moving", function () {
-                socket.setProperties({x: player.x, y: player.y});
+                //socket.setProperties({x: player.x, y: player.y});
             });
 
             player.on("moved", function () {
@@ -81,15 +87,15 @@ include("../controller.php");
             for (var id in avatars) {
                 data = avatars[id];
                 if (data) {
-                    createAvatar(id, data.boardCol, data.boardRow);
+                    createAvatar(id, data.username, data.boardCol, data.boardRow);
                 }
             }
             stage.update();
 
             socket.on("otherjoin", function (data) {
                 if (data) {
-                    createAvatar(data.id, data.boardCol, data.boardRow);
-                    //hablar("[UL]", data.username + " ha entrado.");
+                    createAvatar(data.id, data.username, data.boardCol, data.boardRow);
+                    toastr.info(data.username + " ha entrado en la sala");
                 }
             });
             socket.on("data", function (data) {
@@ -98,14 +104,13 @@ include("../controller.php");
                         board.followPath(others[data.id], data.path); //caminar
                         break;
                     case "hablar":
-                        //hablar(data.username, data.decir);
+                        hablar(data.username, data.decir);
                         break;
                 }
             });
 
             socket.on("otherleave", function (data) {
                 board.remove(others[data.id]);
-                //hablar("[UL]", data.username + " ha salido.");
                 stage.update();
             });
 
@@ -115,8 +120,11 @@ include("../controller.php");
             });
         });
 
-        function createAvatar(id, x, y) {
-            others[id] = new Person(yellow, silver, brown);
+        function createAvatar(id, name, x, y) {
+            var personx = new zim.Person(yellow, silver, brown);
+            var playerRectanglet = new Rectangle({width: 110, height: 40, color: white, corner: [10, 10, 10, 10]}).sca(0.5).center().pos(0, -30, CENTER, TOP, personx);
+            var playerUsrLabelt = new Label(name, null, null, black).pos(0, 0, CENTER, CENTER, playerRectanglet);
+            others[id] = personx;
             board.add(others[id], x, y);
             stage.update();
         }
@@ -293,6 +301,14 @@ include("../controller.php");
             var btnMover = new Button({label: "Mover"}).sca(0.4).pos(10, 10, RIGHT, BOTTOM, informacionContainer);
             var btnGirar = new Button({label: "Girar"}).sca(0.4).pos(10, 10, LEFT, BOTTOM, informacionContainer);
             var btnRecoger = new Button({label: "Recoger"}).sca(0.4).pos(10, 40, RIGHT, BOTTOM, informacionContainer);
+        }
+
+        function hablar(usr, texto) {
+            var messages = zid("messages");
+            var current = messages.innerHTML;
+            messages.innerHTML = current + usr + ": " + texto + "<br>"; // just so not always reading at the very bottom
+            messages.scrollTop = messages.scrollHeight;
+            messages.style.paddingBottom = "40px";
         }
 
         stage.update();
