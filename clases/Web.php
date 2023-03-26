@@ -75,11 +75,11 @@ class Web extends MySQL {
         $mail->Host = 'smtp.dondominio.com';
         $mail->Port = 587;
         $mail->SMTPAuth = true;
-        $mail->Username = 'contacto@urbaloca.es';
+        $mail->Username = 'contacto@urba-loca.es';
         $mail->Password = 'R3$et7inG@&&Z';
         $mail->SMTPSecure = 'tls';
 
-        $mail->From = 'contacto@urbaloca.es';
+        $mail->From = 'contacto@urba-loca.es';
         $mail->FromName = 'UrbaLoca';
         $mail->AddAddress($to);
 
