@@ -12,6 +12,8 @@ include("../controller.php");
 <script src="https://d309knd7es5f10.cloudfront.net/easystar-0.4.3.min.js"></script>
 <script src="https://zimjs.org/cdn/game_2.4.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 <script>
     var others = {};
     const assets = [
