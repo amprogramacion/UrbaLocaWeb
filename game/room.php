@@ -1,20 +1,46 @@
-
-
+<?php
+include("../controller.php");
+?>
 <!-- Individual Scripts from CDN -->
 <script src="https://zimjs.org/cdn/1.3.4/createjs.js"></script>
 <script src="https://zimjs.org/cdn/00/zim_min.js"></script>
+<script src="https://zimjs.org/cdn/2.3.0/socket.io.js"></script>
+<script src="https://zimjs.org/cdn/zimserver_urls.js"></script>
+<script src="https://zimjs.org/cdn/zimsocket_1.1.js"></script>
 
 <!-- bring in EasyStar for path finding and game module for Board -->
 <script src="https://d309knd7es5f10.cloudfront.net/easystar-0.4.3.min.js"></script>
 <script src="https://zimjs.org/cdn/game_2.4.js"></script>
 
 <script>
-    const assets = ["/game/muebles/10_1.png", "/img/logoul.png", "/game/interfaz/ciudad.png", "/imager/loko.png"];
+    var others = {};
+    const assets = [
+        "/game/muebles/10_1.png",
+        "/img/logoul.png",
+        "/game/interfaz/ciudad.png",
+        "/game/interfaz/inventario.png",
+        "/game/interfaz/bg_loks.png",
+        "/imager/loko.png"
+    ];
     const frame = new Frame(FULL, 1024, 768, "#6FB7FF", dark, assets);
     frame.on("ready", () => {
         const stage = frame.stage;
         let stageW = frame.width;
         let stageH = frame.height;
+        var server = zimSocketURL;
+        var app = "urbaloca";
+        var room = "UrbaLocav4-alpha"; // just use the default room
+        var maxPeople = null; // just use the default of 0 which means unlimited
+        var fill = null; // just use the default of fill where clients leave
+        var initObj = {x: 4, y: 7, boardCol: 4, boardRow: 7, username: null};
+        var username = "escavo";//prompt("Nombre de usuario:");
+
+        // we can send an optional initial object to the server
+        // this information will get sent to all the other clients in an otherjoin event
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // PLAYER - DEFINIR EL TAMAÑO DE LA SALA Y EL JUGADOR (ME)
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         var board = new Board({
             cols: 12,
@@ -27,6 +53,67 @@
 
         player = new Person(green, red, purple);
         board.add(player, 4, 0);
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // SOCKETS - HACEN QUE LOS LOKOS SE VEAN ENTRE SI ENTRE OTRAS COSAS
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        socket = new Socket(server, app, room, maxPeople, fill, initObj);
+
+        socket.on("ready", function (avatars) {
+            
+            ServerConectado();
+            
+            player.on("moving", function () {
+                socket.setProperties({x: player.x, y: player.y});
+            });
+
+            player.on("moved", function () {
+                socket.setProperties({boardCol: player.boardCol, boardRow: player.boardRow, accion: 'estoyparado'});
+            });
+
+            // populate the room using the data sent from the server - something like this:
+            // {id:{property:value, p2:v2}, id2:{property:value, p2:v2}, etc.}
+            // note, the data will also hold an id so data.id would give the id too
+            var data;
+            for (var id in avatars) {
+                data = avatars[id];
+                if (data) {
+                    createAvatar(id, data.boardCol, data.boardRow);
+                }
+            }
+            stage.update();
+
+            socket.on("otherjoin", function (data) {
+                if (data) {
+                    createAvatar(data.id, data.boardCol, data.boardRow);
+                    //hablar("[UL]", data.username + " ha entrado.");
+                }
+            });
+            socket.on("data", function (data) {
+                switch (data.accion) {
+                    case "caminar":
+                        board.followPath(others[data.id], data.path); //caminar
+                        break;
+                    case "hablar":
+                        //hablar(data.username, data.decir);
+                        break;
+                }
+            });
+
+            socket.on("otherleave", function (data) {
+                board.remove(others[data.id]);
+                //hablar("[UL]", data.username + " ha salido.");
+                stage.update();
+            });
+
+            socket.on("error", function () {
+                MostrarError("Error de conexión");
+                socket.disconnect();
+            });
+        });
+
+
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // BOARD INTERACTION
@@ -107,11 +194,24 @@
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // HEADER - MOD TOOL, LOGO, LOKS, STATUS
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         var contenedorLoks = new Sprite(asset("/game/interfaz/bg_loks.png")).sca(0.8).center().pos(20, 20, RIGHT, TOP, stage);
+         var misLoks = new Label("250", null, null, black).sca(0.8).pos(30, 27, RIGHT, TOP, contenedorLoks);
+         
+         statusConextionContainer = new Rectangle({width:220,height:50, color:yellow,  corner: [20,20,20,20]}).sca(0.8).center().pos(20, 20, CENTER, TOP, stage);
+         textoStatusConexion = new Label("Conectando...", null, null, black).sca(0.8).pos(0, 0, CENTER, CENTER, statusConextionContainer);
+
+         function ServerConectado() {
+             textoStatusConexion.text = "Conectado";
+             statusConextionContainer.color = green;
+         }
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // FOOTER
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         new Sprite(asset("/img/logoul.png")).center().loc(20, 20);
-        new Sprite(asset("/game/interfaz/ciudad.png")).pos(0, 0, LEFT, BOTTOM, stage);
+        var barraInferior = new Sprite(asset("/game/interfaz/ciudad.png")).pos(0, 0, LEFT, BOTTOM, stage);
         var rectangleBottom = new Rectangle(stage.width, 65, "#666666").pos(0, 0, RIGHT, BOTTOM, stage);
 
         const input = new TextInput({
@@ -135,7 +235,34 @@
             }
         });
 
+        var inventarioBtn = new Sprite(asset("/game/interfaz/inventario.png")).sca(0.6).pos(25, 18, RIGHT, BOTTOM, barraInferior);
+        new Label("Mi inventario", null, null, white).sca(0.3).pos(25, 5, RIGHT, BOTTOM, inventarioBtn);
+        //new Circle(20, grey).pos(70, 10, RIGHT, BOTTOM, barraInferior);
+        //new Circle(20, grey).pos(120, 10, RIGHT, BOTTOM, barraInferior);
+
+
+        inventarioBtn.on("click", function () {
+            MostrarInventario();
+            stage.update();
+        });
+
+        function MostrarInventario() {
+            var btnMover = new Button({label: "Mover"}).sca(0.4);
+            var inventarioPanel = new Panel({titleBar: "INVENTARIO", draggable: true, width: 480, height: 340, spacingV: 25, spacingH: 10, close: true}).center();
+            var btnMover = new Button({label: "Mover"}).sca(0.4).pos(10, 10, RIGHT, BOTTOM, inventarioPanel);
+        }
+
+
+        function MostrarInfoMueble(id_mueble, nombre, desc) {
+            var informacionContainer = new Rectangle(190, 200, "#666666").pos(20, 85, RIGHT, BOTTOM, stage);
+            var btnMover = new Button({label: "Mover"}).sca(0.4).pos(10, 10, RIGHT, BOTTOM, informacionContainer);
+            var btnGirar = new Button({label: "Girar"}).sca(0.4).pos(10, 10, LEFT, BOTTOM, informacionContainer);
+            var btnRecoger = new Button({label: "Recoger"}).sca(0.4).pos(10, 40, RIGHT, BOTTOM, informacionContainer);
+        }
+
         stage.update();
     });
+
+
 </script>
 
