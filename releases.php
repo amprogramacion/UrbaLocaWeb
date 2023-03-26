@@ -18,4 +18,11 @@
         </ul>
     </div>
 </div>
-<br><br><br>
+<br><br>
+<div class="row" style="background-color: #F9FBE6; text-align: center;">
+    <h2>¡Visita nuestro Foro!</h2>
+    <center>
+        <a href="https://urbaloca.foroactivo.com" class="btn btn-success btn-lg">Entrar al Foro de UrbaLoca</a>
+    </center>
+    <br>
+</div>
