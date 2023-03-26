@@ -56,18 +56,18 @@ include("autoload.php");
                 <div id="navbarCollapse" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li<?= Web::isActive("", $__id); ?>><a href="/">Inicio</a></li>
-                        <li><a href="/client-v4.php" target="_blank">Entrar a la v4</a></li>
                         <?php
-                        /*if (empty($_SESSION['username'])) {
+                        if (empty($_SESSION)) {
                             ?>
-                            <li<?= Web::isActive("entrar", $__id); ?>><a href="/entrar">Entrar</a></li>
+                            <li<?= Web::isActive("entrar", $__id); ?>><a href="/entrar">Entrar a la v4</a></li>
                             <li<?= Web::isActive("registro", $__id); ?>><a href="/registro">Regístrate</a></li>
                             <?php
                         } else {
                             ?>
-                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta">Mi Perfil (<?= $_SESSION['username']; ?>)</a></li>
+                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta" style="background-color: yellowgreen;">JUGAR</a></li>
+                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta">Mi Perfil (<?= $_SESSION['usuario']; ?>)</a></li>
                             <?php
-                        }*/
+                        }
                         ?>
                         <li><a href="https://old2016.urba-loca.es/">Entrar a la Old-Release 2016</a></li>
                         <li<?= Web::isActive("releases", $__id); ?>><a href="/releases">Descargar UrbaLoca</a></li>
