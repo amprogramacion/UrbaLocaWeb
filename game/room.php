@@ -32,7 +32,7 @@ include("../controller.php");
         var room = "UrbaLocav4-alpha"; // just use the default room
         var maxPeople = null; // just use the default of 0 which means unlimited
         var fill = null; // just use the default of fill where clients leave
-        var initObj = {x: 4, y: 7, boardCol: 4, boardRow: 7, username: null};
+        var initObj = {x: 4, y: 0, boardCol: 4, boardRow: 0, username: null};
         var username = "escavo";//prompt("Nombre de usuario:");
 
         // we can send an optional initial object to the server
@@ -61,9 +61,9 @@ include("../controller.php");
         socket = new Socket(server, app, room, maxPeople, fill, initObj);
 
         socket.on("ready", function (avatars) {
-            
+
             ServerConectado();
-            
+
             player.on("moving", function () {
                 socket.setProperties({x: player.x, y: player.y});
             });
@@ -108,10 +108,16 @@ include("../controller.php");
             });
 
             socket.on("error", function () {
-                MostrarError("Error de conexión");
+                ServerDesconectado();
                 socket.disconnect();
             });
         });
+
+        function createAvatar(id, x, y) {
+            others[id] = new Person(yellow, silver, brown);
+            board.add(others[id], x, y);
+            stage.update();
+        }
 
 
 
@@ -135,11 +141,11 @@ include("../controller.php");
             }
             if (path) { // because rolled over already
                 board.followPath(player, path);
-                //socket.setProperties({path: path, x: player.boardCol, y: player.boardRow, boardCol: player.boardCol, boardRow: player.boardRow, accion: 'caminar'});
+                socket.setProperties({path: path, x: player.boardCol, y: player.boardRow, boardCol: player.boardCol, boardRow: player.boardRow, accion: 'caminar'});
                 path = null;
             } else { // could be tapping or on mobile with no rollover
                 getPath(true, player); // true to follow it once found
-                alert("getPath(true, player)");
+                socket.setProperties({path: path, x: player.boardCol, y: player.boardRow, boardCol: player.boardCol, boardRow: player.boardRow, accion: 'caminar'});
             }
             stage.update();
         });
@@ -159,6 +165,28 @@ include("../controller.php");
         var path;
         board.on("change", function () { // change triggers when rolled over square changes
             getPath(null, player);
+        });
+
+        // tapping on the tiles (the board also includes arrows so do not tap on board)
+        // to either set the color or set the path depending on toggle button at bottom right
+        // we are increasing score when collecting orbs
+        // but decreasing score if no orb is collected - oooo what a game!
+        // each time we tap we will set orbCollect false
+        // if we hit an orb this will be set to true and the score increased
+        // then when the path is done, we check to see if we need to decrease the score
+        board.tiles.tap(function (e) {
+            if (player.moving) {
+                return;
+            }
+            if (path) { // because rolled over already
+                board.followPath(player, path);
+                socket.setProperties({path: path, x: player.boardCol, y: player.boardRow, boardCol: player.boardCol, boardRow: player.boardRow, accion: 'caminar'});
+                path = null;
+            } else { // could be tapping or on mobile with no rollover
+                getPath(true, player); // true to follow it once found
+                alert("getPath(true, player)");
+            }
+            stage.update();
         });
 
         function getPath(go, player) { // called from change (mouseover) and from tap
@@ -196,16 +224,21 @@ include("../controller.php");
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // HEADER - MOD TOOL, LOGO, LOKS, STATUS
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         var contenedorLoks = new Sprite(asset("/game/interfaz/bg_loks.png")).sca(0.8).center().pos(20, 20, RIGHT, TOP, stage);
-         var misLoks = new Label("250", null, null, black).sca(0.8).pos(30, 27, RIGHT, TOP, contenedorLoks);
-         
-         statusConextionContainer = new Rectangle({width:220,height:50, color:yellow,  corner: [20,20,20,20]}).sca(0.8).center().pos(20, 20, CENTER, TOP, stage);
-         textoStatusConexion = new Label("Conectando...", null, null, black).sca(0.8).pos(0, 0, CENTER, CENTER, statusConextionContainer);
+        var contenedorLoks = new Sprite(asset("/game/interfaz/bg_loks.png")).sca(0.8).center().pos(20, 20, RIGHT, TOP, stage);
+        var misLoks = new Label("250", null, null, black).sca(0.8).pos(30, 27, RIGHT, TOP, contenedorLoks);
 
-         function ServerConectado() {
-             textoStatusConexion.text = "Conectado";
-             statusConextionContainer.color = green;
-         }
+        statusConextionContainer = new Rectangle({width: 220, height: 50, color: yellow, corner: [20, 20, 20, 20]}).sca(0.8).center().pos(20, 20, CENTER, TOP, stage);
+        textoStatusConexion = new Label("Conectando...", null, null, black).sca(0.8).pos(0, 0, CENTER, CENTER, statusConextionContainer);
+
+        function ServerConectado() {
+            textoStatusConexion.text = "Conectado";
+            statusConextionContainer.color = green;
+        }
+
+        function ServerDesconectado() {
+            textoStatusConexion.text = "No Conectado";
+            statusConextionContainer.color = red;
+        }
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // FOOTER
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
