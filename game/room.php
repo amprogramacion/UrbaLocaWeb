@@ -19,6 +19,7 @@ include("../controller.php");
 <script>
     toastr.options.preventDuplicates = true;
     var others = {};
+    var bubbles = [];
     const assets = [
         "/game/muebles/10_1.png",
         "/img/logoul.png",
@@ -34,10 +35,10 @@ include("../controller.php");
         let stageH = frame.height;
         var server = zimSocketURL;
         var app = "urbaloca";
-        var room = "UrbaLocav4-alpha"; // just use the default room
+        var room = "UrbaLocav4-alpha-test"; // just use the default room
         var maxPeople = null; // just use the default of 0 which means unlimited
         var fill = null; // just use the default of fill where clients leave
-        var username = "<?= $_SESSION['usuario'].rand(1,1000); ?>";
+        var username = "<?= $_SESSION['usuario'] . rand(1, 1000); ?>";
         var initObj = {x: 4, y: 0, boardCol: 4, boardRow: 0, username: username};
         //prompt("Nombre de usuario:");
 
@@ -59,7 +60,7 @@ include("../controller.php");
 
         player = new Person(green, red, purple);
         playerRectangle = new Rectangle({width: 110, height: 40, color: white, corner: [10, 10, 10, 10]}).sca(0.5).center().pos(0, -30, CENTER, TOP, player);
-        playerUsrLabel = new Label(username, null, null, black).pos(0, 0, CENTER, CENTER, playerRectangle);
+        playerUsrLabel = new Label(username, null, null, black).sca(0.5).pos(0, 0, CENTER, CENTER, playerRectangle);
         board.add(player, 4, 0);
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,6 +112,7 @@ include("../controller.php");
 
             socket.on("otherleave", function (data) {
                 board.remove(others[data.id]);
+                others[data.id].remove();
                 stage.update();
             });
 
@@ -257,26 +259,6 @@ include("../controller.php");
         var barraInferior = new Sprite(asset("/game/interfaz/ciudad.png")).pos(0, 0, LEFT, BOTTOM, stage);
         var rectangleBottom = new Rectangle(stage.width, 65, "#666666").pos(0, 0, RIGHT, BOTTOM, stage);
 
-        const input = new TextInput({
-            placeholder: "Hablar...",
-            shadowColor: -1,
-            maxLength: 250,
-            width: 600
-        }).sca(0.7).pos(20, 0, LEFT, CENTER, rectangleBottom);
-
-        new Button({
-            label: "HABLAR",
-            group: "shading"
-        }).pos(-210, 0, RIGHT, CENTER, input).tap(function () {
-            pane.show();
-            if (input.text == "") {
-                MostrarError("Debes escribir algo.");
-            } else {
-                hablar(username, input.text);
-                socket.setProperties({username: username, decir: input.text, accion: 'hablar'});
-                input.text = "";
-            }
-        });
 
         var inventarioBtn = new Sprite(asset("/game/interfaz/inventario.png")).sca(0.6).pos(25, 18, RIGHT, BOTTOM, barraInferior);
         new Label("Mi inventario", null, null, white).sca(0.3).pos(25, 5, RIGHT, BOTTOM, inventarioBtn);
@@ -287,6 +269,39 @@ include("../controller.php");
         inventarioBtn.on("click", function () {
             MostrarInventario();
             stage.update();
+        });
+
+
+
+        var input = new TextInput({
+            placeholder: "Hablar...",
+            shadowColor: -1,
+            maxLength: 250,
+            width: 600
+        }).center().sca(0.5).pos(20, 20, LEFT, BOTTOM);
+
+        new Button({
+            label: "HABLAR",
+            group: "shading"
+        }).pos(-210, 0, RIGHT, CENTER, input).tap(function () {
+            if (input.text == "") {
+                alert("Debes escribir algo.");
+            } else {
+                hablar(username, input.text);
+                socket.setProperties({username: username, decir: input.text, accion: 'hablar'});
+                input.text = "";
+            }
+        });
+
+        window.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13)
+                if (input.text == "") {
+                    alert("Debes escribir algo.");
+                } else {
+                    hablar(username, input.text);
+                    socket.setProperties({username: username, decir: input.text, accion: 'hablar'});
+                    input.text = "";
+                }
         });
 
         function MostrarInventario() {
@@ -304,12 +319,26 @@ include("../controller.php");
         }
 
         function hablar(usr, texto) {
-            var messages = zid("messages");
-            var current = messages.innerHTML;
-            messages.innerHTML = current + usr + ": " + texto + "<br>"; // just so not always reading at the very bottom
-            messages.scrollTop = messages.scrollHeight;
-            messages.style.paddingBottom = "40px";
+            var txtLabel = new Label({text: usr+": "+texto, color: black, backgroundColor: white}).sca(0.4).center();
+            console.log(player);
+            bubbles.push(txtLabel);
+            SubirBubbles();
         }
+        
+        function SubirBubbles() {
+            for(var id_bubble in bubbles) {
+                var bubble = bubbles[id_bubble];
+                var nuevay = bubble.y-30;
+                console.log(nuevay);
+                bubble.y = nuevay;
+                if(nuevay <= -60) {
+                    //Eliminar la bubble
+                    bubbles[id_bubble].dispose();
+                }
+            }
+            stage.update();
+        }
+        setInterval(SubirBubbles, 5000);
 
         stage.update();
     });
