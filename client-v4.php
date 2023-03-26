@@ -40,21 +40,24 @@
             var player = null;
             var buttonEntrar = null;
 
-            var scaling = "fit"; // this will resize to fit inside the screen dimensions
+            var scaling = "full"; // this will resize to fit inside the screen dimensions
             var width = 1024;
             var height = 768;
-            var color = light;
+            var color = "#6FB7FF";
             var outerColor = darker;
             var initObj = {x: 4, y: 7, boardCol: 4, boardRow: 7, username: null};
-            var username = prompt("Nombre de usuario:");
+            var username = "escavo";//prompt("Nombre de usuario:");
             if (username == null) {
                 alert("Necesito un usuario para identificarte. Es temporal.");
                 window.location.reload();
             } else {
                 initObj.username = username;
             }
+            const assets = ["game/muebles/10_1.png", "img/logoul.png", "game/interfaz/ciudad.png", "imager/loko.png"];
+            const path = "./";
+            const waiter = new Waiter();
 
-            var frame = new Frame({scaling, width, height, color, outerColor, retina: true});
+            var frame = new Frame({scaling, width, height, color, outerColor, assets, path, waiter});
             frame.on("ready", function () {
                 var stage = frame.stage;
                 var stageW = frame.width;
@@ -74,26 +77,6 @@
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 function begin() { // called from interface button at end of section below
-
-                    const input = new TextInput({
-                        placeholder: "Hablar...",
-                        shadowColor: -1,
-                        maxLength: 250
-                    }).loc(150, 703);
-                    new Button({
-                        label: "HABLAR",
-                        group: "shading"
-                    }).loc(650, 703).tap(function () {
-                        if (input.text == "") {
-                            MostrarError("Debes escribir algo.");
-                        } else {
-                            hablar(username, input.text);
-                            socket.setProperties({username: username, decir: input.text, accion: 'hablar'});
-                            input.text = "";
-                        }
-                    });
-
-
                     // set parameters for the zim.Socket object
                     var server = zimSocketURL;
                     var app = "urbaloca";
@@ -121,7 +104,6 @@
                         // {id:{property:value, p2:v2}, id2:{property:value, p2:v2}, etc.}
                         // note, the data will also hold an id so data.id would give the id too
                         var data;
-                        console.error(avatars);
                         for (var id in avatars) {
                             data = avatars[id];
                             if (data) {
@@ -179,8 +161,11 @@
                 // or toggled later with board.isometric = false;
 
                 var board = new Board({
+                    cols: 12,
+                    rows: 9,
                     backgroundColor: grey,
-                    arrows: false
+                    arrows: false,
+                    size: 30
                 });
 
                 var tree;
@@ -194,11 +179,12 @@
                 // can also add row(index) and col(index) to insert rows
                 // or adjust info parameter.
                 // Then positioning the board
-                loop(10, function () {
-                    board.addCol();
-                    board.addRow();
-                });
-                board.positionBoard(5, 5);
+                /*loop(10, function () {
+                 board.addCol();
+                 board.addRow();
+                 });*/
+                //board.positionBoard(6, 5);
+                board.center();
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 // BOARD ITEMS
@@ -213,10 +199,12 @@
 
                 // add a tree and set the data as it is added to -
                 board.add(new Tree().alp(.9), 5, 3, "-", purple); // - will mean can't change color
-                board.add(new Tree().alp(.9), 5, 0, "-", purple); // - will mean can't change color
+                board.add(new Sprite(asset("game/muebles/10_1.png")), 5, 4, "-", purple); // - will mean can't change color
+                board.add(new Sprite(asset("game/muebles/10_1.png")), 5, 3, "-", purple); // - will mean can't change color
+                board.add(new Sprite(asset("game/muebles/10_1.png")), 5, 2, "-", purple); // - will mean can't change color
                 //Añadimos al jugador local
-                player = new Person(blue, red, blue);
-                board.add(player, 4, 7);
+                player = new Circle();
+                board.add(player, 4, 0);
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 // BOARD INTERACTION
@@ -299,12 +287,50 @@
 
                 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 // COLLECTING AND SCORING
-                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                new Button({label: "ENTRAR", group: "shading"}).center().tap(function (e) {
-                    e.target.dispose();
-                    begin();
+                begin();
+
+                new Sprite(asset("img/logoul.png")).center().loc(20, 20);
+                new Sprite(asset("game/interfaz/ciudad.png")).pos(0, 0, LEFT, BOTTOM, stage);
+                var rectangleBottom = new Rectangle(stage.width, 65, "#666666").pos(0, 0, RIGHT, BOTTOM, stage);
+
+                const input = new TextInput({
+                    placeholder: "Hablar...",
+                    shadowColor: -1,
+                    maxLength: 250,
+                    width: 600
+                }).sca(0.7).pos(20, 0, LEFT, CENTER, rectangleBottom);
+
+                new Button({
+                    label: "HABLAR",
+                    group: "shading"
+                }).loc(650, 703).tap(function () {
+                    pane.show();
+                    if (input.text == "") {
+                        MostrarError("Debes escribir algo.");
+                    } else {
+                        hablar(username, input.text);
+                        socket.setProperties({username: username, decir: input.text, accion: 'hablar'});
+                        input.text = "";
+                    }
                 });
+
+
+                const pane = new Pane({width: 600, height: 450, modal: false, displayClose: true, draggable: true});
+                const cancel = new Button(220, 100, "CERRAR", red).sca(0.3).center(pane).mov(-130, 190);
+                const confirm = new Button(220, 100, "CONFIRMAR", green).sca(0.3).center(pane).mov(130, 190);
+                new Label("Mi inventario", null, null, black).center(pane).mov(20, -200);
+                console.error(pane);
+                cancel.on("click", () => {
+                    pane.hide();
+                });
+                confirm.on("click", () => {
+                    zgo("http://zimjs.com")
+                });
+
+
+
 
                 stage.update(); // this is needed to show any changes
 
@@ -330,6 +356,6 @@
 
     <body>
         <!-- canvas with id="myCanvas" is made by zim Frame -->
-        <div id="messages"></div>
+        <div id="messages" style="display: none;"></div>
     </body>
 </html>
