@@ -7,11 +7,9 @@ class Users extends Web {
         $query = self::query($sql);
         if (self::rowCount($query) >= 1) {
             $ver = self::fetch($query);
-            
             if (password_verify($post['pass'], $ver['pass'])) {
                 self::GenerateLoginToken($ver['usuario']);
-                $_SESSION['username'] = $ver['usuario'];
-                $_SESSION['loks'] = $ver['loks'];
+                $_SESSION = $ver;
                 echo self::Redir(0, "/");
             } else {
                 echo self::Alerta("danger", "Ha ocurrido un error", "El usuario o la contraseña son incorrectos.");
