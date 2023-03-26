@@ -24,7 +24,7 @@ if (!empty($_SESSION['username'])) {
 <div class="row" style="background-color: #F9FBE6; text-align: center;">
     <h2>¡Visita nuestro Foro!</h2>
     <center>
-        <a href="/foro" class="btn btn-success btn-lg">Entrar al Foro de UrbaLoca</a>
+        <a href="https://urbaloca.foroactivo.com" class="btn btn-success btn-lg">Entrar al Foro de UrbaLoca</a>
     </center>
     <br>
 </div>
