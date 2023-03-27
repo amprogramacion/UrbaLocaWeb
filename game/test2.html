@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="js/Casilla.js"></script>
+        <script src="js/Loko.js"></script>
+        <title></title>
+    </head>
+    <body>
+        <canvas id="juego" style="position:fixed;top:0;left:0;background-color:gray;"></canvas>
+        <script type="text/javascript">
+            function cargarImagen(src) {
+                return new Promise(function (success) {
+
+                    var image = new Image();
+
+                    image.src = src;
+
+                    image.onload = function () {
+                        success(this);
+                    };
+
+                });
+            }
+
+            juego.width = innerWidth;
+            juego.height = innerHeight;
+
+            lienzo = juego;
+            ctx = juego.getContext('2d');
+
+            var estructura = {
+                casillas: [],
+
+                // De cuántas casillas por cuántas es la sala
+                dimensiones_casillas: {
+                    x: 5,
+                    y: 7,
+                    w: 42,
+                    h: 22
+                }
+            };
+
+            /*
+             *
+             *	Crear los objetos de las casillas
+             *
+             **/
+            for (var x = 0; x < estructura.dimensiones_casillas.x; x++) {
+                if (estructura.casillas[x] == undefined) {
+                    estructura.casillas[x] = [];
+                }
+                for (var y = 0; y < estructura.dimensiones_casillas.y; y++) {
+                    let casilla = new Casilla(x, y, estructura.dimensiones_casillas.w, estructura.dimensiones_casillas.h);
+                    cargarImagen(casilla.src).then(function (img) {
+                        casilla.img = img;
+                    });
+                    casilla.pos_x = ((estructura.dimensiones_casillas.x - 1) * (casilla.width / 2 + 1)) + y * (casilla.width / 2 + 1) - x * (casilla.width / 2 + 1);
+                    casilla.pos_y = y * (casilla.height / 2) + x * (casilla.height / 2);
+                    //es//tructura.casillas.push(casilla);
+                    estructura.casillas[x][y] = casilla;
+                }
+            }
+            console.log(estructura.casillas);
+            /*
+             *
+             *	Posición de la camara
+             *
+             */
+            var CAMARA_vista = {
+                x: 300,
+                y: 200
+            };
+
+            /*
+             *
+             *	Selector de casilla
+             *
+             */
+            var selector = {
+                image_src: 'selector.png',
+                img: null,
+                coords_x: 0,
+                coords_y: 0,
+                casilla: null
+            };
+
+            cargarImagen(selector.image_src).then(function (img) {
+                selector.img = img;
+            });
+
+            juego.addEventListener('mousemove', function (event) {
+                /*
+                 Calculamos qué casilla está apuntando el usuario
+                 */
+                var x = event.clientX - CAMARA_vista.x;
+                var y = event.clientY - CAMARA_vista.y;
+
+                var cursor_coords = [x - (estructura.dimensiones_casillas.y - 1) * (estructura.dimensiones_casillas.w / 2 + 1) + estructura.dimensiones_casillas.h, y]; // Coordenadas del cursor. A la coordenada X se le restan la distancia que hay desde la casilla X0, Y0
+                /* 
+                 A continación, vamos a calcular qué casilla X y Y respectivamente está debajo del cursor 
+                 */
+                var coords_x = Math.floor(cursor_coords[0] / (estructura.dimensiones_casillas.w / 2 + 1)); /* Comenzamos por el cursor X, su 
+                 coordenada, que además se le restan las coordenadas de la casilla principal (0,0), vamos a dividirlo
+                 para saber cuántas casillas se pudo recorrer desde esa distancia */
+                var coords_y = Math.floor((cursor_coords[1] - (coords_x * estructura.dimensiones_casillas.h / 2)) / estructura.dimensiones_casillas.h);/* Ahora, con el cursor Y
+                 hacemos lo mismo, lo dividimos para saber cuántas casillas pudieron haberse recorrido, pero en
+                 las coordenadas del cursor, se le restan cierta cantidad de pixeles por cada casilla "Y" recorrida,
+                 esto considerando la vista isométrica, pues cada casilla "Y" recorrida, la siguiente se ubica más abajo. */
+                var coords_x = Math.floor((cursor_coords[0] + (coords_y * (estructura.dimensiones_casillas.w / 2 + 1))) / (estructura.dimensiones_casillas.w / 2 + 1)); /* Ahora, finalmente
+                 reasignamos la coordenada X, teniendo en cuenta que cada casilla "X" recorrida, son menos pixeles considerando
+                 la vista isométrica */
+                /*
+                 Hay que tener en cuenta que el cálculo del cursor en la posición X apunta a la casilla Y, y
+                 lo mismo con la posición Y, que apunta a la casilla X.
+                 */
+                var coordsFinal = {
+                    x: coords_y,
+                    y: coords_x
+                };
+
+                selector.coords_x = coordsFinal.x;
+                selector.coords_y = coordsFinal.y;
+
+                // La casilla
+                //selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
+            });
+
+
+            function VisualizarJuego() {
+                ctx.clearRect(0, 0, juego.width, juego.height);
+                //Suelo
+                for (var x = 0; x < estructura.casillas.length; x++) {
+                    for (var y = 0; y < estructura.casillas[x].length; y++) {
+                        var casilla = estructura.casillas[x][y];
+                        ctx.drawImage(casilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
+                    }
+                }
+                //Selector
+                if (selector.img && selector.casilla) {
+                    ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
+                }
+                window.requestAnimationFrame(VisualizarJuego);
+            }
+
+            window.addEventListener("load", function () {
+                VisualizarJuego();
+            });
+        </script>
+    </body>
+</html>
