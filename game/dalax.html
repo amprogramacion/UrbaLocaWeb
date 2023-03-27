@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title></title>
+    </head>
+    <body>
+
+
+        <canvas id="juego" style="position:fixed;top:0;left:0;background-color:gray;"></canvas>
+
+        <script type="text/javascript">
+
+            juego.width = innerWidth;
+            juego.height = innerHeight;
+
+            function cargarImagen(src) {
+                return new Promise(function (success) {
+
+                    var image = new Image();
+
+                    image.src = src;
+
+                    image.onload = function () {
+                        success(this);
+                    }
+
+                });
+            }
+
+            var lienzo = juego,
+                    ctx = juego.getContext('2d');
+
+
+            var imagecasilla = {
+                src: 'casilla.png?1',
+                img: null,
+
+                // Importante: el tamaño
+                width: 42,
+                height: 22
+            }
+
+            // Cargar imagen de la casilla...
+            cargarImagen(imagecasilla.src).then(function (img) {
+                imagecasilla.img = img;
+            });
+
+            var estructura = {
+                casillas: [],
+
+                // De cuántas casillas por cuántas es la sala
+                dimensiones_casillas: {
+                    x: 5,
+                    y: 7
+                }
+            }
+
+            /*
+             *
+             *	Crear los objetos de las casillas
+             *
+             **/
+            for (var x = 0; x < estructura.dimensiones_casillas.x; x++) {
+
+                if (!estructura.casillas[x]) {
+                    estructura.casillas[x] = [];
+                }
+
+                for (var y = 0; y < estructura.dimensiones_casillas.y; y++) {
+                    /*
+                     *
+                     *	Crear la casilla
+                     *
+                     **/
+                    let casilla = {
+                        pos_x: 0,
+                        pos_y: 0,
+                        x: x,
+                        y: y
+                    };
+
+                    casilla.pos_x = ((estructura.dimensiones_casillas.x - 1) * (imagecasilla.width / 2 + 1)) + y * (imagecasilla.width / 2 + 1) - x * (imagecasilla.width / 2 + 1);
+                    casilla.pos_y = y * (imagecasilla.height / 2) + x * (imagecasilla.height / 2);
+
+                    estructura.casillas[x][y] = casilla;
+                }
+            }
+
+            /*
+             *
+             *	El objeto del avatar
+             *
+             **/
+            var Yo = {
+                image_src: 'avatar.png',
+                img: null,
+                posicion: {
+                    casilla: [0, 0],
+                    verCasilla() {
+                        return estructura.casillas[this.casilla[0]][this.casilla[1]];
+                    },
+
+                    /*
+                     *
+                     *	Esta es... posición sobre la casilla, ajustando esto puedes centrar el avatar en la casilla.
+                     *
+                     **/
+                    pos_x: 8,
+                    pos_y: -20,
+
+                    /*
+                     *
+                     *	Posición del avatar respecto a la casilla pero cuando camina, de esto se encarga la funcion "calcularcaminata", no se debe tocar
+                     *
+                     */
+                    pos_caminar_x: 0,
+                    pos_caminar_y: 0
+                },
+
+                caminata: {
+                    caminos: [],
+                    nCaminos_recorridos: 0,
+                    // Modificar aqui si se quiere caminar más rápido o lento
+                    tiempo_por_casilla: 350,
+
+                    // Proximo casilla
+                    prox_casilla: null,
+
+                    // Tiempo en el que se comenzó el camino a esta casilla
+                    timestamp_start_casilla: 0,
+
+                    caminar(caminos) {
+                        this.caminos = caminos;
+                    },
+
+                    calcularCaminata() {
+                        if (!this.caminos.length) {
+                            // No hay caminos, entonces no se ejecuta la funcion.
+                            return;
+                        }
+
+                        var timestamp = (new Date()).getTime();
+
+                        if (!this.prox_casilla) {
+                            this.prox_casilla = this.caminos[this.nCaminos_recorridos];
+                            this.timestamp_start_casilla = timestamp;
+                        }
+
+                        /*
+                         *
+                         *	Respecto a la hora actual y la hora en que se comenzó a ir a esta casilla, junto con el tiempo en que se tarda el avatar llegar a una casilla, podemos calcular en que porcentaje va el trayecto. Entonces, esta variable dará un valor entre 0.(algo) y 1, donde 1 ya superó el trayecto.
+                         
+                         */
+                        var progreso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_casilla;
+
+                        // Si el progreso es uno, ya superó el trayecto, y avanzamos con más caminos
+                        if (progreso >= 1) {
+                            /*
+                             *
+                             *	Mover el avatar hacia esta nueva casilla.
+                             *
+                             **/
+                            Yo.posicion.casilla[0] = this.prox_casilla[0];
+                            Yo.posicion.casilla[1] = this.prox_casilla[1];
+
+                            // Restablecer posición de la caminata
+                            Yo.posicion.pos_caminar_x = 0;
+                            Yo.posicion.pos_caminar_y = 0;
+
+                            this.prox_casilla = null;
+                            this.nCaminos_recorridos++;
+
+                            // Si ya se terminaron todos los caminos, la caminata se detiene y ya no se ejecutará más "calcularcaminata"
+                            if (this.nCaminos_recorridos >= this.caminos.length) {
+                                this.caminos = [];
+                                this.nCaminos_recorridos = 0;
+                            }
+                        } else {
+
+                            /*
+                             *
+                             *	El progreso no es 1, quiere decir que aun está en trayecto
+                             *
+                             */
+                            var miCasilla = Yo.posicion.verCasilla(),
+                                    casillaDestino = estructura.casillas[this.prox_casilla[0]][this.prox_casilla[1]];
+                            /*
+                             *
+                             *	Calcular cuántas píxeles recorrería desde la casilla actual a la casilla destino
+                             *
+                             **/
+                            var trayecto_pos_x = casillaDestino.pos_x - miCasilla.pos_x,
+                                    trayecto_pos_y = casillaDestino.pos_y - miCasilla.pos_y;
+
+                            // Multiplicar el trayecto por el progreso (que deberia ser el progreso algo asi como 0.algo)
+                            Yo.posicion.pos_caminar_x = trayecto_pos_x * progreso;
+                            Yo.posicion.pos_caminar_y = trayecto_pos_y * progreso;
+                        }
+                    }
+                }
+            }
+
+            // Cargar imagen del avatar...
+            cargarImagen(Yo.image_src).then(function (img) {
+                Yo.img = img;
+            });
+
+
+            /*
+             *
+             *	Posición de la camara
+             *
+             */
+            var CAMARA_vista = {
+                x: 0,
+                y: 0
+            }
+
+            // Centrar la camara en la casilla donde está el usuario.
+            CAMARA_vista.x = ((juego.width - imagecasilla.width) / 2) - Yo.posicion.verCasilla().pos_x;
+            CAMARA_vista.y = ((juego.height - imagecasilla.height) / 2) - Yo.posicion.verCasilla().pos_y;
+
+
+            /*
+             *
+             *	Selector de casilla
+             *
+             */
+            var selector = {
+                image_src: 'selector.png',
+                img: null,
+                coords_x: 0,
+                coords_y: 0,
+
+                casilla: null
+            }
+            cargarImagen(selector.image_src).then(function (img) {
+                selector.img = img;
+            });
+
+            juego.addEventListener('mousemove', function (event) {
+                /*
+                 Calculamos qué casilla está apuntando el usuario
+                 */
+                var x = event.clientX - CAMARA_vista.x,
+                        y = event.clientY - CAMARA_vista.y;
+
+                var cursor_coords = [x - (estructura.dimensiones_casillas.y - 1) * (imagecasilla.width / 2 + 1) + 22, y], // Coordenadas del cursor. A la coordenada X se le restan la distancia que hay desde la casilla X0, Y0
+                        /* 
+                         A continación, vamos a calcular qué casilla X y Y respectivamente está debajo del cursor 
+                         */
+                        coords_x = Math.floor(cursor_coords[0] / (imagecasilla.width / 2 + 1)), /* Comenzamos por el cursor X, su 
+                         coordenada, que además se le restan las coordenadas de la casilla principal (0,0), vamos a dividirlo
+                         para saber cuántas casillas se pudo recorrer desde esa distancia */
+                        coords_y = Math.floor((cursor_coords[1] - (coords_x * imagecasilla.height / 2)) / imagecasilla.height);/* Ahora, con el cursor Y
+                         hacemos lo mismo, lo dividimos para saber cuántas casillas pudieron haberse recorrido, pero en
+                         las coordenadas del cursor, se le restan cierta cantidad de pixeles por cada casilla "Y" recorrida,
+                         esto considerando la vista isométrica, pues cada casilla "Y" recorrida, la siguiente se ubica más abajo. */
+                coords_x = Math.floor((cursor_coords[0] + (coords_y * (imagecasilla.width / 2 + 1))) / (imagecasilla.width / 2 + 1)); /* Ahora, finalmente
+                 reasignamos la coordenada X, teniendo en cuenta que cada casilla "X" recorrida, son menos pixeles considerando
+                 la vista isométrica */
+                /*
+                 Hay que tener en cuenta que el cálculo del cursor en la posición X apunta a la casilla Y, y
+                 lo mismo con la posición Y, que apunta a la casilla X.
+                 */
+                var coordsFinal = {
+                    x: coords_y,
+                    y: coords_x
+                }
+
+                selector.coords_x = coordsFinal.x;
+                selector.coords_y = coordsFinal.y;
+
+                // La casilla
+                selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
+            });
+
+            var selectorCamino = {
+                image_src: 'calculadora.png',
+                img: null,
+                inicio_x: null,
+                inicio_y: null,
+                fin_x: null,
+                fin_y: null,
+                caminoCalculado: [],
+                calcularCamino() {
+                    var posicion_recorrida = [selectorCamino.inicio_x, selectorCamino.inicio_y];
+                    var casillas = [];
+
+                    while (posicion_recorrida[0] != selectorCamino.fin_x || posicion_recorrida [1] != selectorCamino.fin_y) {
+
+                        if (posicion_recorrida[0] != selectorCamino.fin_x) {
+                            posicion_recorrida[0] += posicion_recorrida[0] < selectorCamino.fin_x ? 1 : -1;
+                        }
+
+                        if (posicion_recorrida[1] != selectorCamino.fin_y) {
+                            posicion_recorrida[1] += posicion_recorrida[1] < selectorCamino.fin_y ? 1 : -1;
+                        }
+
+                        casillas.push([posicion_recorrida[0], posicion_recorrida[1]]);
+                    }
+                    this.caminoCalculado = casillas;
+                }
+            };
+            cargarImagen(selectorCamino.image_src).then(function (img) {
+                selectorCamino.img = img;
+            });
+
+            juego.addEventListener('click', function (event) {
+                console.log(estructura);
+                selectorCamino.inicio_x = Yo.posicion.casilla[0];
+                selectorCamino.inicio_y = Yo.posicion.casilla[1];
+                selectorCamino.fin_x = selector.coords_x;
+                selectorCamino.fin_y = selector.coords_y;
+                selectorCamino.calcularCamino();
+                Yo.caminata.caminar(selectorCamino.caminoCalculado);
+                console.log(selectorCamino);
+            });
+
+            /*
+             *
+             *	Comenzar a visualizar el juego
+             *
+             **/
+            VisualizarJuego();
+
+            function VisualizarJuego() {
+                ctx.clearRect(0, 0, juego.width, juego.height);
+
+                if (imagecasilla.img) {
+                    for (var x = 0; x < estructura.casillas.length; x++) {
+                        for (var y = 0; y < estructura.casillas[x].length; y++) {
+                            let casilla = estructura.casillas[x][y];
+
+                            ctx.drawImage(imagecasilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
+                        }
+                    }
+                }
+
+                /*
+                 Dibujar selector
+                 */
+                if (selector.img && selector.casilla) {
+                    ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
+                }
+
+                /*
+                 *
+                 *	Dibujar el avatar
+                 *
+                 */
+                {
+                    Yo.caminata.calcularCaminata();
+
+                    let casilla = Yo.posicion.verCasilla();
+
+                    let coords_px = casilla.pos_x + Yo.posicion.pos_x + Yo.posicion.pos_caminar_x,
+                            coords_py = casilla.pos_y + Yo.posicion.pos_y + Yo.posicion.pos_caminar_y;
+
+                    if (Yo.img) {
+                        ctx.drawImage(Yo.img, Math.floor(CAMARA_vista.x + coords_px), Math.floor(CAMARA_vista.y + coords_py));
+                    }
+                }
+
+                window.requestAnimationFrame(VisualizarJuego);
+            }
+
+        </script>
+
+    </body>
+</html>
