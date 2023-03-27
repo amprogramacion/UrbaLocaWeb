@@ -88,6 +88,45 @@
                 }
             }
 
+            var selectorCamino = {
+                image_src: 'calculadora.png',
+                img: null,
+                inicio_x: null,
+                inicio_y: null,
+                fin_x: null,
+                fin_y: null,
+                caminoCalculado: [],
+                calcularCamino() {
+                    var posicion_recorrida = [selectorCamino.inicio_x, selectorCamino.inicio_y];
+                    var casillas = [];
+
+                    var pos_toca = (selectorCamino.fin_x > selectorCamino.fin_y) ? "x" : "y";
+
+                    while (posicion_recorrida[0] != selectorCamino.fin_x || posicion_recorrida [1] != selectorCamino.fin_y) {
+
+                        if (pos_toca == "x") {
+                            if (posicion_recorrida[0] != selectorCamino.fin_x) {
+                                posicion_recorrida[0] += posicion_recorrida[0] < selectorCamino.fin_x ? 1 : -1;
+                            }
+                        }
+
+                        if (pos_toca == "y") {
+                            if (posicion_recorrida[1] != selectorCamino.fin_y) {
+                                posicion_recorrida[1] += posicion_recorrida[1] < selectorCamino.fin_y ? 1 : -1;
+                            }
+                        }
+                        
+                        pos_toca = (pos_toca == "x") ? "y" : "x";
+
+                        casillas.push([posicion_recorrida[0], posicion_recorrida[1]]);
+                    }
+                    this.caminoCalculado = casillas;
+                }
+            };
+            cargarImagen(selectorCamino.image_src).then(function (img) {
+                selectorCamino.img = img;
+            });
+
             /*
              *
              *	El objeto del avatar
@@ -138,6 +177,7 @@
                     calcularCaminata() {
                         if (!this.caminos.length) {
                             // No hay caminos, entonces no se ejecuta la funcion.
+                            selectorCamino.caminoCalculado = [];
                             return;
                         }
 
@@ -200,8 +240,8 @@
                         }
                     }
                 }
-            }
-
+            };
+            
             // Cargar imagen del avatar...
             cargarImagen(Yo.image_src).then(function (img) {
                 Yo.img = img;
@@ -277,46 +317,15 @@
                 selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
             });
 
-            var selectorCamino = {
-                image_src: 'calculadora.png',
-                img: null,
-                inicio_x: null,
-                inicio_y: null,
-                fin_x: null,
-                fin_y: null,
-                caminoCalculado: [],
-                calcularCamino() {
-                    var posicion_recorrida = [selectorCamino.inicio_x, selectorCamino.inicio_y];
-                    var casillas = [];
 
-                    while (posicion_recorrida[0] != selectorCamino.fin_x || posicion_recorrida [1] != selectorCamino.fin_y) {
-
-                        if (posicion_recorrida[0] != selectorCamino.fin_x) {
-                            posicion_recorrida[0] += posicion_recorrida[0] < selectorCamino.fin_x ? 1 : -1;
-                        }
-
-                        if (posicion_recorrida[1] != selectorCamino.fin_y) {
-                            posicion_recorrida[1] += posicion_recorrida[1] < selectorCamino.fin_y ? 1 : -1;
-                        }
-
-                        casillas.push([posicion_recorrida[0], posicion_recorrida[1]]);
-                    }
-                    this.caminoCalculado = casillas;
-                }
-            };
-            cargarImagen(selectorCamino.image_src).then(function (img) {
-                selectorCamino.img = img;
-            });
 
             juego.addEventListener('click', function (event) {
-                console.log(estructura);
                 selectorCamino.inicio_x = Yo.posicion.casilla[0];
                 selectorCamino.inicio_y = Yo.posicion.casilla[1];
                 selectorCamino.fin_x = selector.coords_x;
                 selectorCamino.fin_y = selector.coords_y;
                 selectorCamino.calcularCamino();
                 Yo.caminata.caminar(selectorCamino.caminoCalculado);
-                console.log(selectorCamino);
             });
 
             /*
@@ -336,6 +345,14 @@
 
                             ctx.drawImage(imagecasilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
                         }
+                    }
+                }
+
+                if (selectorCamino.img) {
+                    for (var numpaso = 0; numpaso < selectorCamino.caminoCalculado.length; numpaso++) {
+                        let paso = selectorCamino.caminoCalculado[numpaso];
+                        let casilla = estructura.casillas[paso[0]][paso[1]];
+                        ctx.drawImage(selectorCamino.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
                     }
                 }
 
