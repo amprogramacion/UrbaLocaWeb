@@ -40,10 +40,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                 // De cuántas casillas por cuántas es la sala
                 dimensiones_casillas: {
-                    x: 5,
-                    y: 7,
-                    w: 42,
-                    h: 22
+                    x: 3,
+                    y: 3,
+                    w: 62,
+                    h: 30
                 }
             };
 
@@ -61,9 +61,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     cargarImagen(casilla.src).then(function (img) {
                         casilla.img = img;
                     });
-                    casilla.pos_x = ((estructura.dimensiones_casillas.x - 1) * (casilla.width / 2 + 1)) + y * (casilla.width / 2 + 1) - x * (casilla.width / 2 + 1);
-                    casilla.pos_y = y * (casilla.height / 2) + x * (casilla.height / 2);
-                    //es//tructura.casillas.push(casilla);
+                    
+                    casilla.pos_x = ((estructura.dimensiones_casillas.x - 1) * (casilla.width / 2 )) + y * (casilla.width / 2 ) - x * (casilla.width / 2 -1);
+                    casilla.pos_y = y * (casilla.height / 2) + x * (casilla.height / 2)+1;
+                    
+                    
                     estructura.casillas[x][y] = casilla;
                 }
             }
@@ -129,7 +131,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 selector.coords_y = coordsFinal.y;
 
                 // La casilla
-                //selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
+                selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
             });
 
 
