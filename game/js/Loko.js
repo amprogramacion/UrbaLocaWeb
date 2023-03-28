@@ -7,7 +7,9 @@ class Loko {
         this.id = null;
         this.casillas = [];
         this.caminos = [];
-        this.pos_x = null;
-        this.pos_y = null;
+        this.pos_x = 12;
+        this.pos_y = -70;
+        this.x = null;
+        this.y = null;
     }
 }
