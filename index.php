@@ -59,12 +59,13 @@ include("autoload.php");
                         <?php
                         if (empty($_SESSION)) {
                             ?>
+                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/game/test2.html" style="background-color: yellowgreen;">JUGAR</a></li>
                             <li<?= Web::isActive("entrar", $__id); ?>><a href="/entrar">Entrar a la v4</a></li>
                             <li<?= Web::isActive("registro", $__id); ?>><a href="/registro">Regístrate</a></li>
                             <?php
                         } else {
                             ?>
-                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta" style="background-color: yellowgreen;">JUGAR</a></li>
+                            <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/game/test2.html" style="background-color: yellowgreen;">JUGAR</a></li>
                             <li<?= Web::isActive("mi-cuenta", $__id); ?>><a href="/mi-cuenta">Mi Perfil (<?= $_SESSION['usuario']; ?>)</a></li>
                             <?php
                         }
