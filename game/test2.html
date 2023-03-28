@@ -66,14 +66,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     x: null,
                     y: null,
                     posicion_defecto: 0,
-                    img: null
+                    img: null,
+                    pos_x: 7,
+                    pos_y: -72
                 };
                 muebles.furnis.push(furni);
             }
             var mueble13 = muebles.furnis[2];
             mueble13.posicion_defecto = 0;
-            mueble13.x = 5;
-            mueble13.y = 3;
+            mueble13.x = 0;
+            mueble13.y = 0;
             cargarImagen(mueble13.posiciones[mueble13.posicion_defecto]).then(function (img) {
                 mueble13.img = img;
                 
@@ -108,8 +110,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             cargarImagen(Yo.image_src).then(function (img) {
                 Yo.img = img;
             });
-            Yo.x = 0;
-            Yo.y = 0;
+            Yo.x = 5;
+            Yo.y = 3;
             Yo.casilla = estructura.casillas[0][0];
 
             /*
@@ -249,7 +251,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     for(var id_mueble=0;id_mueble<estructura.furnis.length;id_mueble++) {
                         var mueble = estructura.furnis[id_mueble];
                         var casilla = estructura.casillas[mueble.x][mueble.y];
-                        ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
+                        ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
                     }
                 }
 
