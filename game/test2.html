@@ -76,6 +76,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             });
             Yo.x = 0;
             Yo.y = 0;
+            Yo.casilla = estructura.casillas[0][0];
 
             /*
              *
@@ -172,33 +173,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 selectorCamino.img = img;
             });
 
-            function Caminar(loko, selectorCamino) {
-                var caminar = true;
-                var caminosRecorridos = 0;
-                while (caminar) {
-                    var timestampActual = (new Date()).getTime();
-                    var caminoActual = selectorCamino.caminoCalculado[caminosRecorridos];
-                    alert(caminoActual);
-                    var casilla = estructura.casillas[caminoActual[0]][caminoActual[1]];
-                    loko.x = caminoActual[0];
-                    loko.y = caminoActual[1];
-                    loko.casilla = casilla;
-                    caminosRecorridos++;
-                    loko.pos_caminar_x = 0;
-                    loko.pos_caminar_y = 0;
-                    timestampActual = null;
-                    loko.caminando = true;
-                    if (loko.x == selectorCamino.fin_x && loko.y == selectorCamino.fin_y) {
-                        caminar = false;
-                        loko.caminando = false;
-                    }
-                    if (caminosRecorridos > 20) {
-                        caminar = false;
-                        loko.caminando = false;
-                    }
-                }
-            }
-
             juego.addEventListener('click', function (event) {
                 selectorCamino.inicio_x = Yo.x;
                 selectorCamino.inicio_y = Yo.y;
@@ -206,8 +180,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     selectorCamino.fin_x = selector.coords_x;
                     selectorCamino.fin_y = selector.coords_y;
                     selectorCamino.calcularCamino();
-                    console.log(selectorCamino);
-                    Caminar(Yo, selectorCamino);
+                    Yo.caminos = selectorCamino.caminoCalculado;
                 }
             });
 
@@ -227,6 +200,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
 
                 //Yo
+                
+                Yo.caminar();
+                
                 if (Yo.img) {
                     var casilla = estructura.casillas[Yo.x][Yo.y];
                     var coords_px = casilla.pos_x + Yo.pos_x + Yo.pos_caminar_x;
