@@ -35,10 +35,6 @@ class Loko {
         }
         
         var progreso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_casilla;
-        var progreso2 = (this.caminos_recorridos)/(this.caminos.length*this.tiempo_por_casilla);
-        
-        console.log(progreso);
-        
 
         // Si el progreso es uno, ya superó el trayecto, y avanzamos con más caminos
         if (progreso >= 1) {
@@ -64,10 +60,6 @@ class Loko {
             var trayecto_pos_y = casillaDestino.pos_y - this.casilla.pos_y;
             this.pos_caminar_x = trayecto_pos_x * progreso;
             this.pos_caminar_y = trayecto_pos_y * progreso;
-            console.log(this.casilla);
-           // console.log("trayecto_pos_x: "+trayecto_pos_x+" trayecto_pos_y: "+trayecto_pos_y);
-            
-            //
         }
     }
 }
