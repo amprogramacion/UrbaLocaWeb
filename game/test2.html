@@ -220,7 +220,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     selectorCamino.fin_y = selector.coords_y;
                     selectorCamino.calcularCamino();
                     Yo.caminos = selectorCamino.caminoCalculado;
-                    socket.setProperties({path: selectorCamino.caminoCalculado, x: Yo.x, y: Yo.y, accion: 'caminar'});
+                    socket.setProperties({path: selectorCamino.caminoCalculado, accion: 'caminar'});
                 }
             });
 
@@ -249,10 +249,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             });
 
             socket.on("data", function (data) {
-                console.log(data);
                 switch (data.accion) {
                     case "caminar":
-                        users[data.id].caminos = data.path;
+                        CaminarUsuarioRemoto(data);
+                        //users[data.id].caminos = data.path;
                         break;
                     case "hablar":
                         //hablar(data.username, data.decir);
@@ -261,7 +261,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             });
 
             socket.on("otherleave", function (data) {
-                users.remove(users[data.id]);
+                BorrarUsuario(data);
             });
 
             function CrearUsuario(data) {
@@ -272,6 +272,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 usuario.id = data.id;
                 usuario.casilla = casilla;
                 users.push(usuario);
+            }
+            
+            function BorrarUsuario(data) {
+                if (users.length >= 1) {
+                    for (var id_user = 0; id_user < users.length; id_user++) {
+                        var usuario = users[id_user];
+                        if(usuario.id == data.id) {
+                            users.splice(id_user, 1);
+                        }
+                    }
+                }
+            }
+            
+            function CaminarUsuarioRemoto(data) {
+                if (users.length >= 1) {
+                    for (var id_user = 0; id_user < users.length; id_user++) {
+                        var usuario = users[id_user];
+                        if(usuario.id == data.id) {
+                            usuario.caminos = data.path;
+                        }
+                    }
+                }
             }
 
 
@@ -301,9 +323,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
 
                 //Cargar usuarios
-                if (users.length >= 1) {
+               if (users.length >= 1) {
                     for (var id_user = 0; id_user < users.length; id_user++) {
                         var usuario = users[id_user];
+                        usuario.caminar();
                         var casilla = estructura.casillas[usuario.x][usuario.y];
                         var coords_px = casilla.pos_x + usuario.pos_x + usuario.pos_caminar_x;
                         var coords_py = casilla.pos_y + usuario.pos_y + usuario.pos_caminar_y;
