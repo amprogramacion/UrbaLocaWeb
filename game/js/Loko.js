@@ -20,6 +20,7 @@ class Loko {
         this.caminos_recorridos = 0;
         this.prox_casilla = null;
         this.timestamp_start_casilla = null;
+        this.tiempo_por_casilla = 350;
     }
     caminar() {
         if (!this.caminos.length) {
@@ -28,19 +29,23 @@ class Loko {
         }
 
         var timestamp = (new Date()).getTime();
-
-        if (!this.prox_casilla) {
+        if (this.prox_casilla == null) {
             this.prox_casilla = this.caminos[this.caminos_recorridos];
             this.timestamp_start_casilla = timestamp;
         }
         
         var progreso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_casilla;
+        var progreso2 = (this.caminos_recorridos)/(this.caminos.length*this.tiempo_por_casilla);
+        
+        console.log(progreso);
+        
 
         // Si el progreso es uno, ya superó el trayecto, y avanzamos con más caminos
         if (progreso >= 1) {
             this.x = this.prox_casilla[0];
             this.y = this.prox_casilla[1];
-
+            this.casilla = estructura.casillas[this.prox_casilla[0]][this.prox_casilla[1]];
+            
             // Restablecer posición de la caminata
             this.pos_caminar_x = 0;
             this.pos_caminar_y = 0;
@@ -59,7 +64,10 @@ class Loko {
             var trayecto_pos_y = casillaDestino.pos_y - this.casilla.pos_y;
             this.pos_caminar_x = trayecto_pos_x * progreso;
             this.pos_caminar_y = trayecto_pos_y * progreso;
-            this.casilla = casillaDestino;
+            console.log(this.casilla);
+           // console.log("trayecto_pos_x: "+trayecto_pos_x+" trayecto_pos_y: "+trayecto_pos_y);
+            
+            //
         }
     }
 }
