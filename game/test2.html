@@ -12,7 +12,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <script src="js/Loko.js"></script>
         <title></title>
     </head>
-    <body>
+    <body>    
         <canvas id="juego" style="position:fixed;top:0;left:0;background-color:gray;"></canvas>
         <script type="text/javascript">
             function cargarImagen(src) {
@@ -42,7 +42,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 dimensiones_casillas: {
                     x: 10,
                     y: 12,
-                    w: 62,
+                    w: 60,
                     h: 30
                 }
             };
@@ -61,11 +61,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     cargarImagen(casilla.src).then(function (img) {
                         casilla.img = img;
                     });
-                    
-                    casilla.pos_x = ((estructura.dimensiones_casillas.x - 1) * (casilla.width / 2 )) + y * (casilla.width / 2 ) - x * (casilla.width / 2 -1);
-                    casilla.pos_y = y * (casilla.height / 2) + x * (casilla.height / 2)+1;
-                    
-                    
+
+                    casilla.pos_x = ((estructura.dimensiones_casillas.x - 1) * (casilla.width / 2)) + y * (casilla.width / 2) - x * (casilla.width / 2 - 1);
+                    casilla.pos_y = y * (casilla.height / 2) + x * (casilla.height / 2) + 1;
+
+
                     estructura.casillas[x][y] = casilla;
                 }
             }
@@ -76,8 +76,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
              *
              */
             var CAMARA_vista = {
-                x: 300,
-                y: 200
+                x: 0,
+                y: 0
             };
 
             /*
@@ -98,37 +98,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             });
 
             juego.addEventListener('mousemove', function (event) {
+
                 /*
                  Calculamos qué casilla está apuntando el usuario
                  */
-                var x = event.clientX - CAMARA_vista.x;
-                var y = event.clientY - CAMARA_vista.y;
+                let mouse_x = event.clientX - CAMARA_vista.x;
+                let mouse_y = event.clientY - CAMARA_vista.y;
 
-                var cursor_coords = [x - (estructura.dimensiones_casillas.y - 1) * (estructura.dimensiones_casillas.w / 2 + 1) + estructura.dimensiones_casillas.h, y]; // Coordenadas del cursor. A la coordenada X se le restan la distancia que hay desde la casilla X0, Y0
-                /* 
-                 A continación, vamos a calcular qué casilla X y Y respectivamente está debajo del cursor 
-                 */
-                var coords_x = Math.floor(cursor_coords[0] / (estructura.dimensiones_casillas.w / 2 + 1)); /* Comenzamos por el cursor X, su 
-                 coordenada, que además se le restan las coordenadas de la casilla principal (0,0), vamos a dividirlo
-                 para saber cuántas casillas se pudo recorrer desde esa distancia */
-                var coords_y = Math.floor((cursor_coords[1] - (coords_x * estructura.dimensiones_casillas.h / 2)) / estructura.dimensiones_casillas.h);/* Ahora, con el cursor Y
-                 hacemos lo mismo, lo dividimos para saber cuántas casillas pudieron haberse recorrido, pero en
-                 las coordenadas del cursor, se le restan cierta cantidad de pixeles por cada casilla "Y" recorrida,
-                 esto considerando la vista isométrica, pues cada casilla "Y" recorrida, la siguiente se ubica más abajo. */
-                var coords_x = Math.floor((cursor_coords[0] + (coords_y * (estructura.dimensiones_casillas.w / 2 + 1))) / (estructura.dimensiones_casillas.w / 2 + 1)); /* Ahora, finalmente
-                 reasignamos la coordenada X, teniendo en cuenta que cada casilla "X" recorrida, son menos pixeles considerando
-                 la vista isométrica */
-                /*
-                 Hay que tener en cuenta que el cálculo del cursor en la posición X apunta a la casilla Y, y
-                 lo mismo con la posición Y, que apunta a la casilla X.
-                 */
+                let tile_height = 30;
+                let tile_width = 60;
+
+                hoverTileX = Math.floor((mouse_y / tile_height) + (mouse_x / tile_width)) - 5;
+                hoverTileY = Math.floor((-mouse_x / tile_width) + (mouse_y / tile_height))+5;
+
                 var coordsFinal = {
-                    x: coords_y,
-                    y: coords_x
+                    y: hoverTileX, // + (estructura.dimensiones_casillas.w /2),
+                    x: hoverTileY// + (estructura.dimensiones_casillas.h / 2)
                 };
 
                 selector.coords_x = coordsFinal.x;
                 selector.coords_y = coordsFinal.y;
+                selector.x = mouse_x;
+                selector.y = mouse_y;
 
                 // La casilla
                 selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
@@ -148,6 +139,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 if (selector.img && selector.casilla) {
                     ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
                 }
+
+                ctx.font = "30px Arial";
+                ctx.fillText("coords_x: " + selector.coords_x + " coords_y: " + selector.coords_y, 600, 50);
+                ctx.fillText("x: " + selector.x + " y: " + selector.y, 600, 80);
                 window.requestAnimationFrame(VisualizarJuego);
             }
 
@@ -155,5 +150,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 VisualizarJuego();
             });
         </script>
+
     </body>
 </html>
