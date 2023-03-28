@@ -69,15 +69,22 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     estructura.casillas[x][y] = casilla;
                 }
             }
-            console.log(estructura.casillas);
+
+            var Yo = new Loko("loko.png");
+            cargarImagen(Yo.image_src).then(function (img) {
+                Yo.img = img;
+            });
+            Yo.x = 0;
+            Yo.y = 0;
+
             /*
              *
              *	Posición de la camara
              *
              */
             var CAMARA_vista = {
-                x: 0,
-                y: 0
+                x: (juego.width / 3),
+                y: 200
             };
 
             /*
@@ -109,7 +116,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 let tile_width = 60;
 
                 hoverTileX = Math.floor((mouse_y / tile_height) + (mouse_x / tile_width)) - 5;
-                hoverTileY = Math.floor((-mouse_x / tile_width) + (mouse_y / tile_height))+5;
+                hoverTileY = Math.floor((-mouse_x / tile_width) + (mouse_y / tile_height)) + 5;
 
                 var coordsFinal = {
                     y: hoverTileX, // + (estructura.dimensiones_casillas.w /2),
@@ -138,6 +145,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 //Selector
                 if (selector.img && selector.casilla) {
                     ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
+                }
+
+                //Yo
+                if (Yo.img) {
+                    var casilla = estructura.casillas[Yo.x][Yo.y];
+                    var coords_px = casilla.pos_x + Yo.pos_x;
+                    var coords_py = casilla.pos_y + Yo.pos_y;
+                    ctx.drawImage(Yo.img, Math.floor(CAMARA_vista.x + coords_px), Math.floor(CAMARA_vista.y + coords_py));
                 }
 
                 ctx.font = "30px Arial";
