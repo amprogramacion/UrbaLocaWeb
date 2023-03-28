@@ -18,7 +18,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </head>
     <body>    
         <input type="text" id="decir" placeholder="Hablar...">
-        <canvas id="juego" style="position: absolute;top:0;left:0;background-color:gray; z-index: -90;"></canvas>
+        <canvas id="juego" style="position: absolute;top:0;left:0; background-color: black; z-index: -90;"></canvas>
         <script type="text/javascript">
             function cargarImagen(src) {
                 return new Promise(function (success) {
@@ -268,7 +268,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             socket.on("otherleave", function (data) {
                 BorrarUsuario(data);
             });
-            
+
             function SubirBubbles() {
                 if (bubbles.length >= 1) {
                     for (var id_bubble = 0; id_bubble < bubbles.length; id_bubble++) {
@@ -295,7 +295,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
             };
 
-            
+
 
             function CrearUsuario(data) {
                 var usuario = new Loko("avatar.png");
@@ -341,8 +341,73 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 ctx.restore();
             }
 
+            let starsElements, starsParams = {speed: 2, number: 300, extinction: 4};
+
+// run stars
+            setupStars();
+
+// handle slider
+
+// update stars on resize to keep them centered
+            window.onresize = function () {
+                setupStars();
+            };
+
+// star constructor
+            function Star() {
+                this.x = Math.random() * juego.width;
+                this.y = Math.random() * juego.height;
+                this.z = Math.random() * juego.width;
+
+                this.move = function () {
+                    this.z -= starsParams.speed;
+                    if (this.z <= 0) {
+                        this.z = juego.width;
+                    }
+                };
+
+                this.show = function () {
+                    let x, y, rad, opacity;
+                    x = (this.x - screen.c[0]) * (juego.width / this.z);
+                    x = x + screen.c[0];
+                    y = (this.y - screen.c[1]) * (juego.width / this.z);
+                    y = y + screen.c[1];
+                    rad = juego.width / this.z;
+                    opacity = (rad > starsParams.extinction) ? 1.5 * (2 - rad / starsParams.extinction) : 1;
+
+                    ctx.beginPath();
+                    ctx.fillStyle = "rgba(255, 255, 255, " + opacity + ")";
+                    ctx.arc(x, y, rad, 0, Math.PI * 2);
+                    ctx.fill();
+                };
+            }
+
+            function setupStars() {
+                screen = {
+                    w: window.innerWidth,
+                    h: window.innerHeight,
+                    c: [window.innerWidth * 0.5, window.innerHeight * 0.5]
+                };
+                juego.width = screen.w;
+                juego.height = screen.h;
+                starsElements = [];
+                for (let i = 0; i < starsParams.number; i++) {
+                    starsElements[i] = new Star();
+                }
+            }
+
+            console.log(starsElements);
+            setupStars();
+
+            //FIN STARS
+
             function VisualizarJuego() {
                 ctx.clearRect(0, 0, juego.width, juego.height);
+
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, juego.width, juego.height);
+                
+                
                 //Suelo
                 for (var x = 0; x < estructura.casillas.length; x++) {
                     for (var y = 0; y < estructura.casillas[x].length; y++) {
@@ -350,6 +415,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         ctx.drawImage(casilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
                     }
                 }
+                
+                starsElements.forEach(function (s) {
+                    s.show();
+                    s.move();
+                });
                 //Selector
                 if (selector.img && selector.casilla) {
                     ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
@@ -397,8 +467,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
 
                 ctx.font = "18px Arial";
+                ctx.fillStyle = '#fff';
                 ctx.fillText("coords_x: " + selector.coords_x + " coords_y: " + selector.coords_y, 600, 50);
                 ctx.fillText("x: " + selector.x + " y: " + selector.y, 600, 80);
+
+                //Stars
+
                 window.requestAnimationFrame(VisualizarJuego);
             }
 
@@ -406,6 +480,5 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 VisualizarJuego();
             });
         </script>
-
     </body>
 </html>
