@@ -11,5 +11,7 @@ class Loko {
         this.pos_y = -70;
         this.x = null;
         this.y = null;
+        this.pos_caminar_x = null;
+        this.pos_caminar_y = null;
     }
 }
