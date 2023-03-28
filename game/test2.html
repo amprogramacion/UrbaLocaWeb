@@ -132,6 +132,62 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 selector.casilla = estructura.casillas[selector.coords_x] ? estructura.casillas[selector.coords_x][selector.coords_y] : null;
             });
 
+            //SELECTOR DEL CAMINO
+            var selectorCamino = {
+                image_src: 'calculadora.png',
+                img: null,
+                inicio_x: null,
+                inicio_y: null,
+                fin_x: null,
+                fin_y: null,
+                caminoCalculado: [],
+                calcularCamino() {
+                    var posicion_recorrida = [selectorCamino.inicio_x, selectorCamino.inicio_y];
+                    var casillas = [];
+
+                    var pos_toca = (selectorCamino.fin_x > selectorCamino.fin_y) ? "x" : "y";
+
+                    while (posicion_recorrida[0] != selectorCamino.fin_x || posicion_recorrida [1] != selectorCamino.fin_y) {
+
+                        if (pos_toca == "x") {
+                            if (posicion_recorrida[0] != selectorCamino.fin_x) {
+                                posicion_recorrida[0] += posicion_recorrida[0] < selectorCamino.fin_x ? 1 : -1;
+                            }
+                        }
+
+                        if (pos_toca == "y") {
+                            if (posicion_recorrida[1] != selectorCamino.fin_y) {
+                                posicion_recorrida[1] += posicion_recorrida[1] < selectorCamino.fin_y ? 1 : -1;
+                            }
+                        }
+
+                        pos_toca = (pos_toca == "x") ? "y" : "x";
+
+                        casillas.push([posicion_recorrida[0], posicion_recorrida[1]]);
+                    }
+                    this.caminoCalculado = casillas;
+                }
+            };
+            cargarImagen(selectorCamino.image_src).then(function (img) {
+                selectorCamino.img = img;
+            });
+
+            function Caminar(loko, caminoCalculado) {
+                alert(loko);
+            }
+
+            juego.addEventListener('click', function (event) {
+                selectorCamino.inicio_x = Yo.x;
+                selectorCamino.inicio_y = Yo.y;
+                if (selector.coords_x >= 0 && selector.coords_x <= estructura.dimensiones_casillas.x && selector.coords_y >= 0 && selector.coords_y <= estructura.dimensiones_casillas.y) {
+                    selectorCamino.fin_x = selector.coords_x;
+                    selectorCamino.fin_y = selector.coords_y;
+                    selectorCamino.calcularCamino();
+                    console.log(selectorCamino);
+                    Caminar(selectorCamino.caminoCalculado);
+                }
+            });
+
 
             function VisualizarJuego() {
                 ctx.clearRect(0, 0, juego.width, juego.height);
