@@ -10,13 +10,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="js/Casilla.js"></script>
         <script src="js/Loko.js"></script>
+        <script src="js/Bubble.js"></script>
         <script src="https://zimjs.org/cdn/2.3.0/socket.io.js"></script>
         <script src="https://zimjs.org/cdn/zimserver_urls.js"></script>
         <script src="https://zimjs.org/cdn/zimsocket_1.1.js"></script>
         <title></title>
     </head>
     <body>    
-        <canvas id="juego" style="position:fixed;top:0;left:0;background-color:gray;"></canvas>
+        <input type="text" id="decir" placeholder="Hablar...">
+        <canvas id="juego" style="position: absolute;top:0;left:0;background-color:gray; z-index: -90;"></canvas>
         <script type="text/javascript">
             function cargarImagen(src) {
                 return new Promise(function (success) {
@@ -38,6 +40,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             lienzo = juego;
             ctx = juego.getContext('2d');
             users = [];
+            bubbles = [];
 
             var estructura = {
                 casillas: [],
@@ -116,6 +119,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             Yo.x = 5;
             Yo.y = 3;
             Yo.casilla = estructura.casillas[Yo.x][Yo.y];
+            Yo.username = "escavo";
 
             /*
              *
@@ -255,6 +259,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         //users[data.id].caminos = data.path;
                         break;
                     case "hablar":
+                        alert(data.decir);
                         //hablar(data.username, data.decir);
                         break;
                 }
@@ -263,6 +268,34 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             socket.on("otherleave", function (data) {
                 BorrarUsuario(data);
             });
+            
+            function SubirBubbles() {
+                if (bubbles.length >= 1) {
+                    for (var id_bubble = 0; id_bubble < bubbles.length; id_bubble++) {
+                        var bubble = bubbles[id_bubble];
+                        bubble.pos_y = bubble.pos_y - 25;
+                        if (bubble.pos_y <= -250) {
+                            bubbles.splice(id_bubble, 1);
+                        }
+                    }
+                }
+            }
+
+            intervaloSubirBubbles = setInterval(SubirBubbles, 5000);
+
+            decir.onkeyup = function (e) {
+                if (e.keyCode == 13) {
+                    console.log(Yo);
+                    var bubble = new Bubble(Yo.username, decir.value);
+                    bubble.pos_x = Yo.casilla.pos_x;
+                    bubble.pos_y = Yo.casilla.pos_y - 80;
+                    socket.setProperties({username: Yo.username, decir: decir.value, accion: 'hablar'});
+                    bubbles.push(bubble);
+                    decir.value = "";
+                }
+            };
+
+            
 
             function CrearUsuario(data) {
                 var usuario = new Loko("avatar.png");
@@ -273,29 +306,40 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 usuario.casilla = casilla;
                 users.push(usuario);
             }
-            
+
             function BorrarUsuario(data) {
                 if (users.length >= 1) {
                     for (var id_user = 0; id_user < users.length; id_user++) {
                         var usuario = users[id_user];
-                        if(usuario.id == data.id) {
+                        if (usuario.id == data.id) {
                             users.splice(id_user, 1);
                         }
                     }
                 }
             }
-            
+
             function CaminarUsuarioRemoto(data) {
                 if (users.length >= 1) {
                     for (var id_user = 0; id_user < users.length; id_user++) {
                         var usuario = users[id_user];
-                        if(usuario.id == data.id) {
+                        if (usuario.id == data.id) {
                             usuario.caminos = data.path;
                         }
                     }
                 }
             }
 
+            function drawTextBG(ctx, txt, font, x, y) {
+                ctx.save();
+                ctx.font = font;
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = '#fff';
+                var width = ctx.measureText(txt).width + 10;
+                ctx.fillRect(x, y, width, parseInt(font, 10) + 10);
+                ctx.fillStyle = '#000';
+                ctx.fillText(txt, x + 5, y + 5);
+                ctx.restore();
+            }
 
             function VisualizarJuego() {
                 ctx.clearRect(0, 0, juego.width, juego.height);
@@ -323,7 +367,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
 
                 //Cargar usuarios
-               if (users.length >= 1) {
+                if (users.length >= 1) {
                     for (var id_user = 0; id_user < users.length; id_user++) {
                         var usuario = users[id_user];
                         usuario.caminar();
@@ -340,6 +384,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         var mueble = estructura.furnis[id_mueble];
                         var casilla = estructura.casillas[mueble.x][mueble.y];
                         //ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
+                    }
+                }
+
+                //Cargar bubbles
+                if (bubbles.length >= 1) {
+                    for (var id_bubble = 0; id_bubble < bubbles.length; id_bubble++) {
+                        var bubble = bubbles[id_bubble];
+                        var texto = bubble.user + ": " + bubble.texto;
+                        drawTextBG(ctx, texto, "12px Tahoma", Math.floor(CAMARA_vista.x + bubble.pos_x), Math.floor(CAMARA_vista.y + bubble.pos_y));
                     }
                 }
 
