@@ -10,6 +10,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="js/Casilla.js"></script>
         <script src="js/Loko.js"></script>
+        <script src="https://zimjs.org/cdn/2.3.0/socket.io.js"></script>
+        <script src="https://zimjs.org/cdn/zimserver_urls.js"></script>
+        <script src="https://zimjs.org/cdn/zimsocket_1.1.js"></script>
         <title></title>
     </head>
     <body>    
@@ -34,6 +37,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             lienzo = juego;
             ctx = juego.getContext('2d');
+            users = [];
 
             var estructura = {
                 casillas: [],
@@ -53,7 +57,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             };
 
             for (var mueble = 1; mueble <= 14; mueble++) {
-                console.log(mueble);
                 var furni = {
                     id: mueble,
                     miniatura: "muebles/" + mueble + ".png",
@@ -78,7 +81,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             mueble13.y = 0;
             cargarImagen(mueble13.posiciones[mueble13.posicion_defecto]).then(function (img) {
                 mueble13.img = img;
-                
+
             });
 
             estructura.furnis.push(mueble13);
@@ -217,8 +220,59 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     selectorCamino.fin_y = selector.coords_y;
                     selectorCamino.calcularCamino();
                     Yo.caminos = selectorCamino.caminoCalculado;
+                    socket.setProperties({path: selectorCamino.caminoCalculado, x: Yo.x, y: Yo.y, accion: 'caminar'});
                 }
             });
+
+            var server = zimSocketURL;
+            var app = "urbaloca";
+            var room = "UrbaLocav4-alpha-test"; // just use the default room
+            var maxPeople = null; // just use the default of 0 which means unlimited
+            var fill = null; // just use the default of fill where clients leave
+            var initObj = {x: 1, y: 1, username: null};
+            socket = new Socket(server, app, room, maxPeople, fill, initObj);
+
+            socket.on("ready", function (avatars) {
+                var data;
+                for (var id in avatars) {
+                    data = avatars[id];
+                    if (data) {
+                        CrearUsuario(data);
+                    }
+                }
+            });
+
+            socket.on("otherjoin", function (data) {
+                if (data) {
+                    CrearUsuario(data);
+                }
+            });
+
+            socket.on("data", function (data) {
+                console.log(data);
+                switch (data.accion) {
+                    case "caminar":
+                        users[data.id].caminos = data.path;
+                        break;
+                    case "hablar":
+                        //hablar(data.username, data.decir);
+                        break;
+                }
+            });
+
+            socket.on("otherleave", function (data) {
+                users.remove(users[data.id]);
+            });
+
+            function CrearUsuario(data) {
+                var usuario = new Loko("avatar.png");
+                usuario.x = data.x;
+                usuario.y = data.y;
+                var casilla = estructura.casillas[usuario.x][usuario.y];
+                usuario.id = data.id;
+                usuario.casilla = casilla;
+                users.push(usuario);
+            }
 
 
             function VisualizarJuego() {
@@ -245,13 +299,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     var coords_py = casilla.pos_y + Yo.pos_y + Yo.pos_caminar_y;
                     ctx.drawImage(Yo.img, Math.floor(CAMARA_vista.x + coords_px), Math.floor(CAMARA_vista.y + coords_py));
                 }
-                
+
+                //Cargar usuarios
+                if (users.length >= 1) {
+                    for (var id_user = 0; id_user < users.length; id_user++) {
+                        var usuario = users[id_user];
+                        var casilla = estructura.casillas[usuario.x][usuario.y];
+                        var coords_px = casilla.pos_x + usuario.pos_x + usuario.pos_caminar_x;
+                        var coords_py = casilla.pos_y + usuario.pos_y + usuario.pos_caminar_y;
+                        ctx.drawImage(Yo.img, Math.floor(CAMARA_vista.x + coords_px), Math.floor(CAMARA_vista.y + coords_py));
+                    }
+                }
+
                 //Cargar furnis
-                if(estructura.furnis.length >=1) {
-                    for(var id_mueble=0;id_mueble<estructura.furnis.length;id_mueble++) {
+                if (estructura.furnis.length >= 1) {
+                    for (var id_mueble = 0; id_mueble < estructura.furnis.length; id_mueble++) {
                         var mueble = estructura.furnis[id_mueble];
                         var casilla = estructura.casillas[mueble.x][mueble.y];
-                        ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
+                        //ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
                     }
                 }
 
