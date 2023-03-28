@@ -259,8 +259,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         //users[data.id].caminos = data.path;
                         break;
                     case "hablar":
-                        alert(data.decir);
-                        //hablar(data.username, data.decir);
+                        DecirUsuario(data);
                         break;
                 }
             });
@@ -313,6 +312,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         var usuario = users[id_user];
                         if (usuario.id == data.id) {
                             users.splice(id_user, 1);
+                        }
+                    }
+                }
+            }
+
+            function DecirUsuario(data) {
+                if (users.length >= 1) {
+                    for (var id_user = 0; id_user < users.length; id_user++) {
+                        var usuario = users[id_user];
+                        if (usuario.id == data.id) {
+                            var bubble = new Bubble(usuario.username, data.decir);
+                            bubble.pos_x = usuario.casilla.pos_x;
+                            bubble.pos_y = usuario.casilla.pos_y - 80;
+                            bubbles.push(bubble);
                         }
                     }
                 }
@@ -406,8 +419,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                 ctx.fillStyle = "black";
                 ctx.fillRect(0, 0, juego.width, juego.height);
-                
-                
+
+
                 //Suelo
                 for (var x = 0; x < estructura.casillas.length; x++) {
                     for (var y = 0; y < estructura.casillas[x].length; y++) {
@@ -415,7 +428,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         ctx.drawImage(casilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
                     }
                 }
-                
+
                 starsElements.forEach(function (s) {
                     s.show();
                     s.move();
