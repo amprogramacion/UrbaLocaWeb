@@ -11,5 +11,6 @@ class Casilla {
         this.furnis = [];
         this.user = null;
         this.walkable = true;
+        this.invisible = false;
     }
 }
