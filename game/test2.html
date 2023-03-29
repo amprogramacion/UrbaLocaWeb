@@ -89,6 +89,23 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             estructura.furnis.push(mueble13);
 
+            var lokoImg = {
+                posicion_quieto: [],
+                posiciones_andando: []
+            };
+            for (var pos = 1; pos <= 4; pos++) {
+                lokoImg.posiciones_andando[pos] = [
+                    "loko/posiciones/" + pos + "/" + pos + "_1.png",
+                    "loko/posiciones/" + pos + "/" + pos + "_2.png",
+                    "loko/posiciones/" + pos + "/" + pos + "_3.png",
+                    "loko/posiciones/" + pos + "/" + pos + "_4.png"
+                ];
+                lokoImg.posicion_quieto[pos] = "loko/posiciones/" + pos + "/" + pos + "_1.png";
+            }
+
+            console.log(lokoImg);
+
+
             /*
              *
              *	Crear los objetos de las casillas
@@ -113,9 +130,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             }
 
             var Yo = new Loko("loko.png");
-            cargarImagen(Yo.image_src).then(function (img) {
-                Yo.img = img;
-            });
+
             Yo.x = 5;
             Yo.y = 3;
             Yo.casilla = estructura.casillas[Yo.x][Yo.y];
@@ -284,7 +299,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             decir.onkeyup = function (e) {
                 if (e.keyCode == 13) {
-                    console.log(Yo);
                     var bubble = new Bubble(Yo.username, decir.value);
                     bubble.pos_x = Yo.casilla.pos_x;
                     bubble.pos_y = Yo.casilla.pos_y - 80;
@@ -409,7 +423,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
             }
 
-            console.log(starsElements);
             setupStars();
 
             //FIN STARS
@@ -441,6 +454,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 //Yo
 
                 Yo.caminar();
+
+                if (Yo.caminando == false) {
+                    var imagenYo = lokoImg.posicion_quieto[Yo.mirando];
+                } else {
+                    //var imagenYo = lokoImg.posiciones_andando[Yo.mirando];
+                    var imagenYo = lokoImg.posicion_quieto[Yo.mirando];
+                }
+                cargarImagen(imagenYo).then(function (img) {
+                    Yo.img = img;
+                });
 
                 if (Yo.img) {
                     var casilla = estructura.casillas[Yo.x][Yo.y];
