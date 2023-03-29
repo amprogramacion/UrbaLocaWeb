@@ -18,7 +18,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </head>
     <body>
         <input type="button" onclick="CentrarCamara()" value="Centrar cámara">
-        <input type="text" id="decir" placeholder="Hablar...">
+        <input type="text" id="decir" placeholder="Hablar..." maxlength="200">
         <canvas id="juego" style="position: absolute;top:0;left:0; background-color: black; z-index: -90;"></canvas>
         <script type="text/javascript">
             function cargarImagen(src) {
@@ -198,8 +198,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 selector.img = img;
             });
 
+            mousePress = false;
+
+            juego.addEventListener('mousedown', function (event) {
+                mousePress = true;
+            });
+
+            juego.addEventListener('mouseup', function (event) {
+                if (mousePress == true) {
+                    mousePress = false;
+                }
+            });
+
             juego.addEventListener('mousemove', function (event) {
 
+                if (mousePress == true) {
+                    CAMARA_vista.x = ((juego.width - estructura.dimensiones_casillas.w) / 2) - event.clientX;
+                    CAMARA_vista.y = ((juego.height - estructura.dimensiones_casillas.h) / 2) - event.clientY;
+                }
                 /*
                  Calculamos qué casilla está apuntando el usuario
                  */
