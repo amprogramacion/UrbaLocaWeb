@@ -21,7 +21,9 @@ class Loko {
         this.prox_casilla = null;
         this.timestamp_start_casilla = null;
         this.tiempo_por_casilla = 350;
+        this.tiempo_por_paso = 350;
         this.mirando = 1;
+        this.frameCaminar = 1;
     }
     caminar() {
 
@@ -38,6 +40,14 @@ class Loko {
         }
 
         var progreso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_casilla;
+        var progreso_paso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_paso;
+        
+        if(progreso_paso >= 1) {
+            this.frameCaminar++;
+            if(this.frameCaminar > 4) {
+                this.frameCaminar = 1;
+            }
+        }
 
         // Si el progreso es uno, ya superó el trayecto, y avanzamos con más caminos
         if (progreso >= 1) {
@@ -60,7 +70,7 @@ class Loko {
             } else {
                 this.caminando = true;
             }
-        } else {
+        } else { 
             var casillaDestino = estructura.casillas[this.prox_casilla[0]][this.prox_casilla[1]];
             
             
@@ -77,7 +87,7 @@ class Loko {
                 this.mirando = 3;
             }
             
-            console.log("x: "+this.x+" y: "+this.y+" cDx: "+casillaDestino.x+" cDy: " +casillaDestino.y+" Mirando "+this.mirando);
+            console.log("x: "+this.x+" y: "+this.y+" cDx: "+casillaDestino.x+" cDy: " +casillaDestino.y+" Mirando "+this.mirando+ "Fc: "+this.frameCaminar);
             
             var trayecto_pos_x = casillaDestino.pos_x - this.casilla.pos_x;
             var trayecto_pos_y = casillaDestino.pos_y - this.casilla.pos_y;
