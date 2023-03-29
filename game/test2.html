@@ -51,8 +51,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     y: 12,
                     w: 60,
                     h: 30
-                },
-                furnis: []
+                }
             };
 
             var muebles = {
@@ -80,14 +79,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             }
             var mueble13 = muebles.furnis[2];
             mueble13.posicion_defecto = 0;
-            mueble13.x = 0;
-            mueble13.y = 0;
+            mueble13.x = 5;
+            mueble13.y = 2;
             cargarImagen(mueble13.posiciones[mueble13.posicion_defecto]).then(function (img) {
                 mueble13.img = img;
 
             });
 
-            estructura.furnis.push(mueble13);
+
+
 
             var lokoImg = {
                 posicion_quieto: [],
@@ -102,8 +102,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 ];
                 lokoImg.posicion_quieto[pos] = "loko/posiciones/" + pos + "/" + pos + "_1.png";
             }
-
-            console.log(lokoImg);
 
 
             /*
@@ -129,12 +127,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 }
             }
 
+            estructura.casillas[mueble13.x][mueble13.y].furnis.push(mueble13);
+
             var Yo = new Loko("loko.png");
 
             Yo.x = 5;
             Yo.y = 3;
             Yo.casilla = estructura.casillas[Yo.x][Yo.y];
             Yo.username = "escavo";
+
+            estructura.casillas[Yo.x][Yo.y].user = Yo;
 
             /*
              *
@@ -433,46 +435,62 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 ctx.fillStyle = "black";
                 ctx.fillRect(0, 0, juego.width, juego.height);
 
+                Yo.caminar();
+
+                //Estrellitas
+                starsElements.forEach(function (s) {
+                    s.show();
+                    s.move();
+                });
 
                 //Suelo
                 for (var x = 0; x < estructura.casillas.length; x++) {
                     for (var y = 0; y < estructura.casillas[x].length; y++) {
                         var casilla = estructura.casillas[x][y];
                         ctx.drawImage(casilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
+
+                        //Cargar selector del suelo (sale por debajo de los furnis y los users pero encima de las casillas)
+                        
+
+                        //Cargar furnis
+                        if (casilla.furnis.length >= 1) {
+                            for (var id_mueble = 0; id_mueble < casilla.furnis.length; id_mueble++) {
+                                var mueble = casilla.furnis[id_mueble];
+                                ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
+                            }
+                        }
+
+                        //Cargar personas yo
+                        if (casilla.user != null) {
+                            if (casilla.user.x == casilla.x && casilla.user.y == casilla.y) {
+
+                                if (Yo.caminando == false) {
+                                    var imagenYo = lokoImg.posicion_quieto[Yo.mirando];
+                                } else {
+                                    //var imagenYo = lokoImg.posiciones_andando[Yo.mirando];
+                                    var imagenYo = lokoImg.posiciones_andando[Yo.mirando][Yo.frameCaminar];
+                                }
+                                cargarImagen(imagenYo).then(function (img) {
+                                    Yo.img = img;
+                                });
+
+                                if (Yo.img) {
+                                    var casilla = estructura.casillas[Yo.x][Yo.y];
+                                    var coords_px = casilla.pos_x + Yo.pos_x + Yo.pos_caminar_x;
+                                    var coords_py = casilla.pos_y + Yo.pos_y + Yo.pos_caminar_y;
+                                    ctx.drawImage(Yo.img, Math.floor(CAMARA_vista.x + coords_px), Math.floor(CAMARA_vista.y + coords_py));
+                                }
+                            }
+                        }
+                        
+                        //Selector
+                        if (selector.img && selector.casilla) {
+                            ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
+                        }
                     }
                 }
-
-                starsElements.forEach(function (s) {
-                    s.show();
-                    s.move();
-                });
-                //Selector
-                if (selector.img && selector.casilla) {
-                    ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
-                }
-
-                //Yo
-
-                Yo.caminar();
-
-                if (Yo.caminando == false) {
-                    var imagenYo = lokoImg.posicion_quieto[Yo.mirando];
-                } else {
-                    //var imagenYo = lokoImg.posiciones_andando[Yo.mirando];
-                    var imagenYo = lokoImg.posiciones_andando[Yo.mirando][Yo.frameCaminar];
-                }
-                cargarImagen(imagenYo).then(function (img) {
-                    Yo.img = img;
-                });
-
-                if (Yo.img) {
-                    var casilla = estructura.casillas[Yo.x][Yo.y];
-                    var coords_px = casilla.pos_x + Yo.pos_x + Yo.pos_caminar_x;
-                    var coords_py = casilla.pos_y + Yo.pos_y + Yo.pos_caminar_y;
-                    ctx.drawImage(Yo.img, Math.floor(CAMARA_vista.x + coords_px), Math.floor(CAMARA_vista.y + coords_py));
-                }
-
-                //Cargar usuarios
+                
+                //Cargar usuarios - no se calcula el depth
                 if (users.length >= 1) {
                     for (var id_user = 0; id_user < users.length; id_user++) {
                         var usuario = users[id_user];
@@ -484,14 +502,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     }
                 }
 
-                //Cargar furnis
-                if (estructura.furnis.length >= 1) {
-                    for (var id_mueble = 0; id_mueble < estructura.furnis.length; id_mueble++) {
-                        var mueble = estructura.furnis[id_mueble];
-                        var casilla = estructura.casillas[mueble.x][mueble.y];
-                        //ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
-                    }
-                }
 
                 //Cargar bubbles
                 if (bubbles.length >= 1) {
