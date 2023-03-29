@@ -16,7 +16,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <script src="https://zimjs.org/cdn/zimsocket_1.1.js"></script>
         <title></title>
     </head>
-    <body>    
+    <body>
+        <input type="button" onclick="CentrarCamara()" value="Centrar cámara">
         <input type="text" id="decir" placeholder="Hablar...">
         <canvas id="juego" style="position: absolute;top:0;left:0; background-color: black; z-index: -90;"></canvas>
         <script type="text/javascript">
@@ -47,8 +48,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                 // De cuántas casillas por cuántas es la sala
                 dimensiones_casillas: {
-                    x: 10,
-                    y: 12,
+                    x: 21,
+                    y: 21,
                     w: 60,
                     h: 30
                 }
@@ -144,9 +145,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
              *
              */
             var CAMARA_vista = {
-                x: (juego.width / 3),
-                y: 200
+                x: 0,
+                y: 0
             };
+
+            CAMARA_vista.x = ((juego.width - estructura.dimensiones_casillas.w) / 2) - Yo.casilla.pos_x;
+            CAMARA_vista.y = ((juego.height - estructura.dimensiones_casillas.h) / 2) - Yo.casilla.pos_y;
 
             /*
              *
@@ -170,7 +174,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 /*
                  Calculamos qué casilla está apuntando el usuario
                  */
-                let mouse_x = event.clientX - CAMARA_vista.x;
+                let mouse_x = event.clientX - CAMARA_vista.x - (60*5)-30;
                 let mouse_y = event.clientY - CAMARA_vista.y;
 
                 let tile_height = 30;
@@ -180,8 +184,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 hoverTileY = Math.floor((-mouse_x / tile_width) + (mouse_y / tile_height)) + 5;
 
                 var coordsFinal = {
-                    y: hoverTileX, // + (estructura.dimensiones_casillas.w /2),
-                    x: hoverTileY// + (estructura.dimensiones_casillas.h / 2)
+                    y: hoverTileX,
+                    x: hoverTileY
                 };
 
                 selector.coords_x = coordsFinal.x;
@@ -427,6 +431,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
             setupStars();
 
+            function CentrarCamara() {
+                //Centrar la cámara
+                CAMARA_vista.x = ((juego.width - estructura.dimensiones_casillas.w) / 2) - Yo.casilla.pos_x;
+                CAMARA_vista.y = ((juego.height - estructura.dimensiones_casillas.h) / 2) - Yo.casilla.pos_y;
+            }
+
+
+
             //FIN STARS
 
             function VisualizarJuego() {
@@ -453,7 +465,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     for (var y = 0; y < estructura.casillas[x].length; y++) {
                         var casilla = estructura.casillas[x][y];
                         ctx.drawImage(casilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
-                        
+
                         //Cargar furnis
                         if (casilla.furnis.length >= 1) {
                             casilla.walkable = false;
