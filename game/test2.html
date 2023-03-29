@@ -443,15 +443,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     s.move();
                 });
 
+                //Cargar selector del suelo (sale por debajo de los furnis y los users pero encima de las casillas)
+                if (selector.img && selector.casilla) {
+                    ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
+                }
+
                 //Suelo
                 for (var x = 0; x < estructura.casillas.length; x++) {
                     for (var y = 0; y < estructura.casillas[x].length; y++) {
                         var casilla = estructura.casillas[x][y];
                         ctx.drawImage(casilla.img, Math.floor(CAMARA_vista.x + casilla.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y));
-
-                        //Cargar selector del suelo (sale por debajo de los furnis y los users pero encima de las casillas)
                         
-
                         //Cargar furnis
                         if (casilla.furnis.length >= 1) {
                             for (var id_mueble = 0; id_mueble < casilla.furnis.length; id_mueble++) {
@@ -482,14 +484,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 }
                             }
                         }
-                        
-                        //Selector
-                        if (selector.img && selector.casilla) {
-                            ctx.drawImage(selector.img, Math.floor(CAMARA_vista.x + selector.casilla.pos_x), Math.floor(CAMARA_vista.y + selector.casilla.pos_y));
-                        }
+
+
                     }
                 }
-                
+
                 //Cargar usuarios - no se calcula el depth
                 if (users.length >= 1) {
                     for (var id_user = 0; id_user < users.length; id_user++) {
