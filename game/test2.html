@@ -459,7 +459,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     var imagenYo = lokoImg.posicion_quieto[Yo.mirando];
                 } else {
                     //var imagenYo = lokoImg.posiciones_andando[Yo.mirando];
-                    var imagenYo = lokoImg.posicion_quieto[Yo.mirando];
+                    var imagenYo = lokoImg.posiciones_andando[Yo.mirando][Yo.frameCaminar];
                 }
                 cargarImagen(imagenYo).then(function (img) {
                     Yo.img = img;
