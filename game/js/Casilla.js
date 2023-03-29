@@ -8,5 +8,7 @@ class Casilla {
         this.y = y;
         this.width = w;
         this.height = h;
+        this.furnis = [];
+        this.user = null;
     }
 }
