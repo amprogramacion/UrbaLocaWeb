@@ -10,5 +10,6 @@ class Casilla {
         this.height = h;
         this.furnis = [];
         this.user = null;
+        this.walkable = true;
     }
 }
