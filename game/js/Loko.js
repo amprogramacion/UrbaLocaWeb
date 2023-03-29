@@ -19,9 +19,11 @@ class Loko {
         this.caminando = false;
         this.caminos_recorridos = 0;
         this.prox_casilla = null;
+        this.prox_paso = null;
         this.timestamp_start_casilla = null;
+        this.timestamp_start_paso = null;
         this.tiempo_por_casilla = 350;
-        this.tiempo_por_paso = 350;
+        this.tiempo_por_paso = 200;
         this.mirando = 1;
         this.frameCaminar = 1;
     }
@@ -38,13 +40,18 @@ class Loko {
             this.prox_casilla = this.caminos[this.caminos_recorridos];
             this.timestamp_start_casilla = timestamp;
         }
+         if (this.prox_paso == null) {
+            this.prox_paso = 1;
+            this.timestamp_start_paso = timestamp;
+        }
 
         var progreso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_casilla;
-        var progreso_paso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_paso;
+        var progreso_paso = (timestamp - this.timestamp_start_paso) / this.tiempo_por_paso;
         
         if(progreso_paso >= 1) {
+            this.prox_paso = null;
             this.frameCaminar++;
-            if(this.frameCaminar > 4) {
+            if(this.frameCaminar >= 5) {
                 this.frameCaminar = 1;
             }
         }
