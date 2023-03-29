@@ -24,6 +24,8 @@ class Loko {
         this.mirando = 1;
     }
     caminar() {
+
+        //Cargar la posición mirando
         if (!this.caminos.length) {
             // No hay caminos, entonces no se ejecuta la funcion.
             return;
@@ -34,7 +36,7 @@ class Loko {
             this.prox_casilla = this.caminos[this.caminos_recorridos];
             this.timestamp_start_casilla = timestamp;
         }
-        
+
         var progreso = (timestamp - this.timestamp_start_casilla) / this.tiempo_por_casilla;
 
         // Si el progreso es uno, ya superó el trayecto, y avanzamos con más caminos
@@ -42,11 +44,11 @@ class Loko {
             this.x = this.prox_casilla[0];
             this.y = this.prox_casilla[1];
             this.casilla = estructura.casillas[this.prox_casilla[0]][this.prox_casilla[1]];
-            
+
             // Restablecer posición de la caminata
             this.pos_caminar_x = 0;
             this.pos_caminar_y = 0;
-
+            
             this.prox_casilla = null;
             this.caminos_recorridos++;
 
@@ -54,9 +56,29 @@ class Loko {
             if (this.caminos_recorridos >= this.caminos.length) {
                 this.caminos = [];
                 this.caminos_recorridos = 0;
+                this.caminando = false;
+            } else {
+                this.caminando = true;
             }
         } else {
             var casillaDestino = estructura.casillas[this.prox_casilla[0]][this.prox_casilla[1]];
+            
+            
+            if(this.x < casillaDestino.x && this.y == casillaDestino.y) {
+                this.mirando = 2;
+            }
+            if(this.x > casillaDestino.x && this.y == casillaDestino.y) {
+                this.mirando = 4;
+            }
+            if(this.y < casillaDestino.y && this.x == casillaDestino.x) {
+                this.mirando = 1;
+            }
+            if(this.y > casillaDestino.y && this.x == casillaDestino.x) {
+                this.mirando = 3;
+            }
+            
+            console.log("x: "+this.x+" y: "+this.y+" cDx: "+casillaDestino.x+" cDy: " +casillaDestino.y+" Mirando "+this.mirando);
+            
             var trayecto_pos_x = casillaDestino.pos_x - this.casilla.pos_x;
             var trayecto_pos_y = casillaDestino.pos_y - this.casilla.pos_y;
             this.pos_caminar_x = trayecto_pos_x * progreso;
