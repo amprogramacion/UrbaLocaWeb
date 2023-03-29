@@ -52,7 +52,30 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     y: 21,
                     w: 60,
                     h: 30
-                }
+                },
+                mapa: [
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0]
+                ]
             };
 
             var muebles = {
@@ -86,6 +109,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 mueble13.img = img;
 
             });
+            
+            
 
 
 
@@ -115,7 +140,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     estructura.casillas[x] = [];
                 }
                 for (var y = 0; y < estructura.dimensiones_casillas.y; y++) {
-                    let casilla = new Casilla(x, y, estructura.dimensiones_casillas.w, estructura.dimensiones_casillas.h);
+                    var mapa = estructura.mapa[x][y];
+                    let casilla = new Casilla("suelo/"+mapa+".png", x, y, estructura.dimensiones_casillas.w, estructura.dimensiones_casillas.h);
                     cargarImagen(casilla.src).then(function (img) {
                         casilla.img = img;
                     });
