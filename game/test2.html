@@ -456,6 +456,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         
                         //Cargar furnis
                         if (casilla.furnis.length >= 1) {
+                            casilla.walkable = false;
                             for (var id_mueble = 0; id_mueble < casilla.furnis.length; id_mueble++) {
                                 var mueble = casilla.furnis[id_mueble];
                                 ctx.drawImage(mueble.img, Math.floor(CAMARA_vista.x + casilla.pos_x + mueble.pos_x), Math.floor(CAMARA_vista.y + casilla.pos_y + mueble.pos_y));
