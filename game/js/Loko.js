@@ -21,6 +21,7 @@ class Loko {
         this.prox_casilla = null;
         this.timestamp_start_casilla = null;
         this.tiempo_por_casilla = 350;
+        this.mirando = 1;
     }
     caminar() {
         if (!this.caminos.length) {
