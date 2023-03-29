@@ -61,6 +61,7 @@ class Loko {
             this.x = this.prox_casilla[0];
             this.y = this.prox_casilla[1];
             this.casilla = estructura.casillas[this.prox_casilla[0]][this.prox_casilla[1]];
+            estructura.casillas[this.x][this.y].user = this;
 
             // Restablecer posición de la caminata
             this.pos_caminar_x = 0;
